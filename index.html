@@ -440,45 +440,88 @@ async function docxRead(buf){const r=await mammoth.extractRawText({arrayBuffer:b
 function cleanLines(ls){const seen=new Set(),out=[];for(let l of ls){l=l.replace(/\s+/g," ").trim();if(!l)continue;if(l.length>25){if(seen.has(l))continue;seen.add(l)}if(out.length&&out[out.length-1]===l)continue;out.push(l)}return out}
 
 const H_OBL=/(lecturas?|bibliograf[ií]a|textos?|referencias?)\s*(de\s*)?(obligatori|b[aá]sic|m[ií]nim|fundamental|principal|preparatori)/i;
-const H_COM=/(lecturas?|bibliograf[ií]a|textos?|referencias?)\s*(de\s*)?(complementari|recomendad|sugerid|adicional|opcional|de apoyo)/i;
+const H_COM=/(lecturas?|bibliograf[ií]a|textos?|referencias?)\s*(de\s*)?(complementari|recomendad|sugerid|adicional|opcional|optativ|electiv|de apoyo)/i;
 const H_GEN=/^\s*(bibliograf[ií]a|referencias bibliogr[aá]ficas|lecturas|material de lectura)\s*[:.]?\s*$/i;
 const H_GEN2=/^\s*(bibliograf[ií]a|referencias bibliogr[aá]ficas)\s*[:.]\s+\S/i; // «Bibliografía. Texto explicativo…»: se espera la primera cita
 const STOPL=/^\s*((sesi[oó]n|clase|semana|m[oó]dulo|unidad)\s*(n[°º.]?\s*)?\d|(objetivos?|evaluaci[oó]n|estructura de evaluaci|metodolog[ií]a|descripci[oó]n|contenidos?|r[uú]brica|calendario|profesor(a|es)?|ponderaci[oó]n|fecha|instancia|para todas|para el examen|requisitos|resultados de aprendizaje|competencias)\b)/i;
 const NEWREF=/^([•\-–·\*▪●]|\d{1,2}[\.\)]\s|[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’\-]+(\s(y|de|del|la|van|von)?\s?[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’\-]+){0,3}\s?,\s|["“«]|https?:|www\.)/;
-const SESS=/^\s*(sesi[oó]n|clase|semana|m[oó]dulo|unidad)\s*(n[°º.]?\s*)?\d/i,BUL=/^([•\-–·\*▪●]\s*\S|\d{1,2}[\.\)]\s)/;
-function parseRefs(lines){const refs=[];let cap=false,tipo="Sin indicar",prev=null,wait=false,gen=false,mini=false;
-  const push=(raw)=>{const bul=BUL.test(raw);const txt=raw.replace(/^[•\-–·\*▪●]\s*/,"").replace(/^\d{1,2}[\.\)]\s+/,"").replace(/^\(\*\)\s*/,"").trim();
+const SESS=/^\s*(sesi[oó]n|clase|semana|m[oó]dulo|unidad)\s*(n[°º.]?\s*)?\d/i,BUL=/^([•\-–·\*▪●]\s*\S|\d{1,2}[\.\)]\s|\([a-z]\)\s)/;
+const HEAD=/^\W{0,4}(\(\*\)\s*)?(lecturas?|bibliograf|textos?|referencias?)/i;   // «Lectura obligatoria» solo cuenta como título al inicio de la línea
+const CAPSAU=/^[A-ZÁÉÍÓÚÑ]{3,}[A-ZÁÉÍÓÚÑ \-]*,\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]/;          // «PÉREZ, Juan»: abre cita nueva
+const LOOSE=/^(\(\*\)\s*)?([A-ZÁÉÍÓÚÑ]{3,}[A-ZÁÉÍÓÚÑ \-]*,\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ].*\(\d{4}\)|[Ll]ibro\s*:|[Aa]puntes de clases?\b(?!\s*,)|[^:“"«]{3,60}:\s*[“"«])/; // cita suelta dentro de una sesión
+const LAW=/^(Ley|Decreto|Reglamento|D\.?F\.?L\.?)\s+\S/;
+/* Word: si un párrafo trae un link por cada título entre comillas, cada título es una cita */
+function splitByLinks(lines,links){const nz=s=>String(s||"").replace(/\s+/g," ").trim();const cnt={};
+  for(const lk of links||[]){const a=nz(lk.anchor);(cnt[a]??=new Set()).add(cleanUrl(lk.url))}
+  return lines.flatMap(l=>{const n=cnt[l]?.size||0;if(n<2||/\S\s*•\s/.test(l))return[l];
+    const q=[...l.matchAll(/[“"«]([^”"»]{3,})[”"»]/g)].map(m=>m[1].trim());if(q.length!==n)return[l];
+    const bul=(l.match(/^[•\-–·\*▪●]\s*(\(\*\)\s*)?/)||[""])[0];const pre=l.slice(bul.length).split(/[“"«]/)[0].replace(/[\s:,]+$/,"");
+    return q.map(t=>bul+(pre?pre+": ":"")+"“"+t+"”")})}
+/* para no juntar obras distintas: «Tomo I, Volumen 1» y «Volumen 2», o «Dictamen N° 100/1» y «N° 200/2», son obras diferentes */
+const ids=s=>new Set([...s.replace(/º/g,"°").matchAll(/(?:n[°º]\.?|vol(?:umen)?\.?|tomos?|rol)\s*([\w][\w\.\-\/]*)/gi)].map(m=>m[0].toLowerCase().replace(/\s+/g,"").replace(/[.,;]+$/,"")));
+const idsOk=(A,B)=>!A.size||!B.size||(A.size===B.size&&[...A].every(x=>B.has(x)));
+const yr=s=>(s.match(/\b(19|20)\d{2}\b/)||[""])[0],sur=s=>(s.match(/^[^\s,.(]+/)||[""])[0].toLowerCase();   // primer año y primer apellido
+const dice=(A,B)=>{let i=0;for(const t of A)if(B.has(t))i++;return A.size+B.size?2*i/(A.size+B.size):0};
+function parseRefs(lines){const refs=[];let cap=false,tipo="Sin indicar",prev=null,wait=false,gen=false,mini=false,loose=false,inSes=false,lastTipo="Sin indicar";
+  const push=(raw)=>{const bul=BUL.test(raw);const txt=raw.replace(/^[•\-–·\*▪●]\s*/,"").replace(/^\d{1,2}[\.\)]\s+/,"").replace(/^\([a-z]\)\s+/,"").replace(/^\(\*\)\s*/,"").trim();
     if(txt.length<6||/^(n\/?a|no aplica|ninguna|-+)$/i.test(txt))return;
-    if(prev&&/^(https?:|www\.|disponible en)/i.test(txt)){prev.ref+=" "+txt;return}   // un link suelto es parte de la cita anterior
+    // un link suelto es parte de la cita anterior solo si esta lo anuncia («Disponible en:»); si no, es una cita aparte
+    if(prev&&/^disponible en/i.test(txt)){prev.ref+=" "+txt;return}
+    if(prev&&/^(https?:|www\.)/i.test(txt)&&/(:|\ben|disponible|enlace|link)\s*$/i.test(prev.ref)){prev.ref+=" "+txt;return}
     if(prev&&/^art[ií]culos?\b/i.test(txt)&&/^(ley|decreto|d\.?f\.?l|c[oó]digo|reglamento)\b/i.test(prev.ref)){prev.ref+=" "+txt;return} // artículos de una ley: parte de esa cita
     // si la cita anterior empezó con viñeta, solo otra viñeta abre una cita nueva; si no, rige la regla de «Apellido, » o punto final
-    const newer=!prev||prev.tipo!==tipo||bul||(!prev.bul&&(NEWREF.test(txt)||/[\.\)”"]\s*$/.test(prev.ref)));
+    // autor en mayúsculas, «Libro:», una ley o «Apuntes de clase» abren cita nueva aunque la anterior empezara con viñeta
+    const strong=CAPSAU.test(txt)||/^libro\s*:/i.test(txt)||/^apuntes de clases?\b/i.test(txt)||/^(ley|decreto)\s+(n[°º.]?\s*)?\d/i.test(txt);
+    const cont=!bul&&/^(revista|en:|pp?\.\s*\d|editorial|ed\.|vol\.|n[°º]\s*\d)/i.test(txt);   // «Revista de Derecho…, N°16: pp. 203-224.»: sigue la cita anterior
+    const newer=!prev||prev.tipo!==tipo||bul||strong||(!cont&&!prev.bul&&(NEWREF.test(txt)||/[\.\)”"]\s*$/.test(prev.ref)));
     if(!newer&&prev.ref.length<600){prev.ref+=" "+txt;return}
     prev={ref:txt,tipo,bul};refs.push(prev)};
-  // varias viñetas en una misma línea (Word): se separan
-  lines=lines.flatMap(l=>l.split(/\s+(?=•\s)/));
+  // varias viñetas en una misma línea (Word) o un autor pegado al punto anterior («pp. 10-20.PÉREZ, Juan»): se separan
+  lines=lines.flatMap(l=>l.split(/(?<=\S)\s*(?=•\s)/)).flatMap(l=>l.split(/(?<=\.)(?=[A-ZÁÉÍÓÚÑ]{3,}, [A-ZÁÉÍÓÚÑ])/));
   for(const l of lines){
+    if(SESS.test(l))inSes=true;
     // «Sentencias:», «Jurisprudencia:», etc.: se leen solo sus viñetas, hasta el siguiente punto numerado del programa
     if(/^\s*(sentencias|jurisprudencia|casos|normativa|legislaci[oó]n|leyes)\s*:?\s*$/i.test(l)){cap=true;mini=true;tipo=gen?tipo:"Sin indicar";prev=null;continue}
     if(mini&&/^\d{1,2}[\.\)]\s/.test(l)){cap=false;mini=false;prev=null;continue}
     if(/^\s*(lecturas?|bibliograf)/i.test(l))mini=false;
-    if(H_OBL.test(l)){cap=true;tipo="Básica";prev=null;const r=l.split(/:\s*/).slice(1).join(": ");if(r)push(r);continue}
-    if(H_COM.test(l)){cap=true;tipo="Complementaria";prev=null;const r=l.split(/:\s*/).slice(1).join(": ");if(r)push(r);continue}
+    const rest=()=>{const k=l.indexOf(":");return k<0?"":l.slice(k+1).trim()};   // lo que sigue al primer «:» (no corta «https://»)
+    if(HEAD.test(l)&&H_OBL.test(l)){cap=true;loose=false;tipo=lastTipo="Básica";prev=null;const r=rest();if(r)push(r);continue}
+    if(HEAD.test(l)&&H_COM.test(l)){cap=true;loose=false;tipo=lastTipo="Complementaria";prev=null;const r=rest();if(r)push(r);continue}
     if(H_GEN.test(l)){cap=true;gen=true;tipo="Sin indicar";prev=null;wait=false;continue}
+    // otro encabezado corto de bibliografía («BIBLIOGRAFÍA PARA EL CASO:»): abre lectura sin tipo; nunca se pega a la cita anterior
+    if(HEAD.test(l)&&l.length<45&&/:\s*$/.test(l)){cap=true;loose=false;tipo="Sin indicar";prev=null;continue}
     if(H_GEN2.test(l)&&!H_OBL.test(l)&&!H_COM.test(l)){cap=true;gen=true;tipo="Sin indicar";prev=null;wait=true;continue}
     // dentro de una sección «Bibliografía» general, «Sesión N» es un subtítulo: no corta la lectura
-    if(SESS.test(l)){if(gen){cap=true;tipo="Sin indicar";prev=null;continue}cap=false;prev=null;wait=false;continue}
+    if(SESS.test(l)){loose=false;if(gen){cap=true;tipo="Sin indicar";prev=null;continue}cap=false;prev=null;wait=false;continue}
     if(gen&&/^\s*profesor(a|es)?\s*:/i.test(l))continue;
-    if(STOPL.test(l)){cap=false;gen=false;prev=null;wait=false;continue}
+    if(STOPL.test(l)){cap=false;gen=false;loose=false;prev=null;wait=false;continue}
+    // cita suelta: termina con un tema del programa («• Precio», «IX. Caso…»); una ley suelta solo sigue con sus artículos
+    if(loose){if(/^[\*•\-]?\s*art[ií]culos?\b/i.test(l)){push(l);continue}
+      const b=l.replace(/^[•\-–·\*▪●]\s*/,"");
+      if(loose==="law"||/^[IVXL]+\.\s/.test(l)||(b!==l&&!LOOSE.test(b))){cap=false;loose=false;prev=null}}
+    // dentro de las sesiones, sin encabezado: autor con año, «Libro:», «Apuntes de clase», «Autor: “Título”» o una ley en su propia línea
+    if(!cap&&inSes&&!gen){const b=l.replace(/^[•\-–·\*▪●]\s*/,"");
+      if(LOOSE.test(b)||(b===l&&l.length<90&&LAW.test(l))){cap=true;loose=LOOSE.test(b)?"cit":"law";tipo=lastTipo;prev=null;push(l);continue}}
     if(cap&&wait){if(!NEWREF.test(l))continue;wait=false}
     if(cap)push(l)}
   const SHORT=/^[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚáéíóúñÑ'’\-]+(\s+et al\.?|\s*(&|y)\s*[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚáéíóúñÑ'’\-]+)?,?\s*(\(\d{4}\))?[.,]?\s*(cap(s|[ií]tulos?)?\.?\s*[\d\s,y\-–]+.*)?$/i;
   const ok=refs.map(r=>({ref:r.ref.replace(/\s+/g," ").trim(),tipo:r.tipo})).filter(r=>(r.ref.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ]/g,"").length>=6||/^(ley|decreto|d\.?f\.?l|norma)\b.*\d{3}/i.test(r.ref))
     &&!(/^(\d|pp\b)/i.test(r.ref)&&r.ref.length<45)
     &&!/:\s*$/.test(r.ref)&&!/^(art[ií]culos?\s+seminal(es)?|bibliograf[ií]a\s+seminal|controles de lectura)/i.test(r.ref)   // subtítulos, no citas
-    &&!(r.ref.length<70&&SHORT.test(r.ref)));                                                                            // «Ross et al., Cap. 4»: remite a una obra ya citada
-  // la misma obra citada dos veces en el syllabus (por sesión y en la lista final) cuenta una vez; si alguna vez es básica, queda básica
-  const out=[];for(const r of ok){const T=toks(r.ref);const d=out.find(o=>sim(o.T,T)>=85);if(d){if(r.tipo==="Básica")d.tipo="Básica";if(r.ref.length>d.ref.length){d.ref=r.ref;d.T=T}continue}out.push({...r,T})}
+    &&!(r.ref.length<70&&SHORT.test(r.ref))                                                                             // «Ross et al., Cap. 4»: remite a una obra ya citada
+    &&!/^(tener|traer|llevar|imprimir)\b/i.test(r.ref)                                                                    // instrucciones para la clase, no citas
+    &&!/^no (se )?(identifican|hay|existen|aplica|incluye|contempla)/i.test(r.ref));                                       // «No se identifican circulares…»: aviso, no cita
+  // mismo autor y título, con otras páginas o capítulos («Pérez… Madrid, 2001, pp. 10-20» y «… 2001. Capítulos IV y VI»)
+  const pre=s=>{const m=s.match(/^(.{30,}?)\b(19|20)\d{2}\b/);return m?m[1].toLowerCase().replace(/[^a-záéíóúñü]/g,""):""};
+  // «Capítulo Quinto del Manual del Curso» y «Guía número 4»: para comparar se mira la obra, sin capítulo ni número
+  const KEY=s=>s.replace(/^((primera|segunda|tercera|cuarta)\s+parte\s+del?\s+)?(ejercicios\s+de\s+)?cap[ií]tulos?\s+[\wáéíóú]+(\s+y\s+[\wáéíóú]+)?(\s+del?)?\s+/i,"").replace(/\s+n[uú]mero\s+\d+(\s+a\s+\d+)?\b/i,"");
+  // la misma obra citada dos veces (por sesión y en la lista final, o con el mismo link) cuenta una vez; si alguna vez es básica, queda básica
+  const out=[];for(const r of ok){const k=KEY(r.ref);if(k.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ]/g,"").length<6)continue;const T=toks(k);const U=(r.ref.match(URLX)||[]).map(cleanUrl).filter(u=>/^(https?:\/\/)?[^\/]+\/[^\s]{4,}/.test(u)&&!/[-_\/=?&]$/.test(u)); // solo links completos a una página específica, no «www.ejemplo.cl» ni un link cortado
+    const I=ids(r.ref);
+    const P=pre(r.ref);
+    // misma obra: muy parecida, o parecida con el mismo apellido y año («Pérez (1984)… PDF gratuito en la web»), o mismo autor y título con otras páginas
+    const sameAY=o=>yr(r.ref)&&yr(r.ref)===yr(o.ref)&&sur(r.ref)===sur(o.ref);
+    const d=out.find(o=>idsOk(o.I,I)&&((sim(o.T,T)>=85&&(dice(o.T,T)>=.85||sameAY(o)))||(P&&P===o.P))||(U.length&&U.some(u=>o.U.includes(u))));if(d){if(r.tipo==="Básica")d.tipo="Básica";if(r.ref.length>d.ref.length){d.ref=r.ref;d.T=T;d.U=U;d.I=I;d.P=P}continue}out.push({...r,T,U,I,P})}
   return out.map(({ref,tipo})=>({ref,tipo}))}
 /* cada link se asigna a la referencia que contiene su texto */
 function assignLinks(sy){sy.refs.forEach(r=>{r.T=toks(r.ref);r.links=[...new Set((r.ref.match(URLX)||[]).map(cleanUrl))]});
@@ -499,7 +542,7 @@ async function readSyllabusFiles(files,onProg){const list=[];let total=0;
   const tick=()=>{if(onProg)onProg(list,total)};
   const handle=async(name,buf)=>{const ext=name.toLowerCase().split(".").pop();let rd;
     try{rd=ext==="pdf"?await pdfRead(buf):await docxRead(buf)}catch(e){list.push({file:name,error:"No se pudo leer el archivo",lines:[],refs:[],links:[]});return}
-    const lines=cleanLines(rd.lines);const sy={file:name,lines,links:rd.links,header:lines.slice(0,15).join(" "),subject:guessSubject(lines,name),version:versionYear(lines),refs:parseRefs(lines)};
+    const lines=cleanLines(rd.lines);const sy={file:name,lines,links:rd.links,header:lines.slice(0,15).join(" "),subject:guessSubject(lines,name),version:versionYear(lines),refs:parseRefs(splitByLinks(lines,rd.links))};
     assignLinks(sy);list.push(sy)};
   for(const f of files){const n=f.name.toLowerCase();
     if(n.endsWith(".zip")){const z=f._z||await JSZip.loadAsync(await f.arrayBuffer());
