@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Revisor de Syllabus BUAI</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@300;400;600;700&display=swap">
+<title>Comprobador de Syllabus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@300;400;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -12,290 +12,365 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <style>
 :root{
-  --ink:#111111; --lead:#3F4247; --grey:#8A8D91; --silver:#BFC3C8; --hair:#DADCDF; --paper:#FFFFFF;
-  --pos:#1B2A4A; --neg:#E10600;
-  --head:"Sora",system-ui,sans-serif; --text:"Inter",system-ui,sans-serif;
-  --cut:20px 3px 20px 3px; --cut-s:12px 2px 12px 2px; color-scheme:light;
+  --ink:#111111; --plomo:#3F4247; --grey:#3F4247; --silver:#BFC3C8; --linea:#E3E5E8; --pos:#1B2A4A; --neg:#E10600;
+  --grafito:linear-gradient(180deg,#040405 0%,#141518 16%,#2E3035 33%,#45474D 50%,#2E3035 67%,#141518 84%,#040405 100%);
   --metal:linear-gradient(135deg,#FFFFFF 0%,#C9CDD2 20%,#F7F8F9 38%,#9EA2A8 58%,#EEF0F2 78%,#BFC3C8 100%);
-  --piano:linear-gradient(160deg,#3A3D42 0%,#16171A 42%,#000 100%);
-  --glass:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.62));
+  --bordeplata:linear-gradient(135deg,#FDFDFE,#C3C8CF 25%,#F2F3F5 50%,#AEB4BC 75%,#E6E8EB);
+  --vidrio:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.78));
+  --linea-pa:linear-gradient(90deg,#111 0%,#8A8D91 45%,#DADCDF 75%,rgba(218,220,223,0));
+  --head:"Sora",system-ui,sans-serif; --text:"Inter",system-ui,sans-serif;
+  --r:22px 4px 22px 4px; --rs:14px 3px 14px 3px;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{background:
-  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1161 0 119 720'%3E%3Cg fill='%23ECECEC'%3E%3Crect x='1161' y='0' width='27' height='28'/%3E%3Crect x='1202' y='0' width='78' height='28'/%3E%3Crect x='1252' y='28' width='28' height='203'/%3E%3Crect x='1161' y='231' width='119' height='29'/%3E%3Crect x='1161' y='260' width='28' height='229'/%3E%3Crect x='1224' y='260' width='29' height='201'/%3E%3Crect x='1161' y='461' width='119' height='28'/%3E%3Crect x='1252' y='489' width='28' height='202'/%3E%3Crect x='1161' y='691' width='119' height='29'/%3E%3C/g%3E%3C/svg%3E") right top / auto 100vh repeat-y fixed,
-  linear-gradient(90deg,#111 0,#111 12px,transparent 12px) left top / 100% 100% fixed no-repeat,#FFFFFF}
-body{margin:0;color:var(--ink);font-family:var(--text);font-size:14.5px;line-height:1.6;
-  padding-left:max(36px,env(safe-area-inset-left,0px));padding-right:max(36px,env(safe-area-inset-right,0px));padding-block:28px 64px}
-.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:30px}
-h1,h2,h3{font-family:var(--head);margin:0;text-wrap:balance;letter-spacing:-.02em}
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/180px,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.005' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 -.015'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E") 0 0/800px,
+  radial-gradient(120% 90% at 30% 0%,#FFFFFF 0%,#F7F7F7 55%,#EDEDEE 100%) fixed;min-height:100%}
+body{margin:0;color:var(--ink);font-family:var(--text);font-size:14.5px;line-height:1.55;padding:0 0 70px 12px}
+body::before{content:"";position:fixed;left:0;top:0;bottom:0;width:12px;background:linear-gradient(90deg,#040405,#2E3035 45%,#45474D 55%,#040405)}
+.wrap{max-width:1220px;margin:0 auto;padding:30px 36px 0;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-.02em}
 h2{font-size:22px;font-weight:600} h3{font-size:15px;font-weight:600}
 p{margin:0}
-.lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;font-weight:600;background:linear-gradient(90deg,#6B6F75,#BFC3C8 45%,#6B6F75);-webkit-background-clip:text;background-clip:text;color:transparent}
-.muted{color:var(--grey)}
+a{color:var(--pos)}
+.lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--plomo)}
+.muted{color:var(--plomo)}
 .num{font-variant-numeric:tabular-nums}
-/* glass base */
-.glass{background:var(--glass) padding-box,var(--metal) border-box;border:1.2px solid transparent;-webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
-  box-shadow:inset 0 1.5px 0 #fff,inset 0 0 24px rgba(255,255,255,.35),0 24px 48px -28px rgba(17,17,17,.45),0 2px 6px -2px rgba(17,17,17,.12);position:relative}
-.piano{background:var(--piano) padding-box,var(--metal) border-box;border:1.2px solid transparent;color:#fff}
-/* header */
-header.top{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;border-bottom:1px solid var(--hair);padding-bottom:22px}
-.title{font-size:clamp(30px,4.6vw,50px);font-weight:300;line-height:1.02;letter-spacing:-.035em}
+/* vidrio blanco con borde de plata */
+.glass{position:relative;border-radius:var(--r);background:var(--vidrio) padding-box,var(--metal) border-box;border:1.3px solid transparent;
+  -webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:inset 0 1.5px 0 #fff,inset 1.5px 0 0 rgba(255,255,255,.6),0 1px 2px rgba(17,17,17,.10)}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(155deg,rgba(255,255,255,.75) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 72%,rgba(255,255,255,.35) 100%)}
+.glass>*{position:relative;z-index:1}
+.glass.s{border-radius:var(--rs)}
+/* botones */
+.btn{all:unset;cursor:pointer;position:relative;overflow:hidden;padding:11px 22px;border-radius:var(--rs);font-weight:600;font-size:13.5px;color:#fff;white-space:nowrap;
+  background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.25);transition:transform .25s ease,filter .25s ease}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.12)} .btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btn:focus-visible{outline:2px solid var(--pos);outline-offset:3px}
+.ripple{position:absolute;border-radius:50%;transform:scale(0);background:radial-gradient(circle,rgba(255,255,255,.6),rgba(255,255,255,0) 70%);pointer-events:none;animation:rip .65s ease-out forwards}
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+/* encabezado */
+header.top{display:block;padding-bottom:18px;border-bottom:1px solid var(--linea)}
+.eyebrow{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:4px}
+.title{font-size:clamp(30px,4.4vw,48px);font-weight:300;line-height:1.02;letter-spacing:-.035em;margin-left:-.045em}
 .title b{font-weight:700;background:linear-gradient(100deg,#111 0%,#111 40%,#8A8D91 48%,#FFF 50%,#8A8D91 52%,#111 60%,#111 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s ease-in-out infinite}
 @keyframes shine{0%{background-position:100% 0}55%,100%{background-position:0 0}}
-.sub{color:var(--lead);max-width:640px;margin-top:10px;font-size:15px;font-weight:300}
-.ctx{display:flex;flex-direction:column;gap:8px;align-items:flex-end;font-size:12.5px}
-.sel{appearance:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:8px 34px 8px 14px;border-radius:99px;cursor:pointer;max-width:360px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23111' stroke-width='1.8'/%3E%3C/svg%3E") right 14px center no-repeat,var(--glass) padding-box,var(--metal) border-box;border:1.2px solid transparent}
-.sel:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
-.sel.sm{font-size:12px;padding:5px 28px 5px 10px;background-position:right 10px center,0 0,0 0;max-width:260px}
-/* kpis */
-.exec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.k{padding:20px 22px;border-radius:22px 4px 22px 4px;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
-.k:nth-child(even){transform:translateY(10px)}
-.k:hover{transform:translateY(-6px) rotate(-.6deg)}
-.k .t{font-weight:700;font-size:12.5px}
-.k .v{font-family:var(--head);font-size:46px;font-weight:300;line-height:1.1;letter-spacing:-.03em;background:linear-gradient(180deg,#3F4247,#000);-webkit-background-clip:text;background-clip:text;color:transparent}
-.k .s{font-size:12px;color:var(--grey)} .k .s.p{color:var(--pos)}
-.tri{position:absolute;right:16px;bottom:16px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent}
-.tri.up{border-bottom:9px solid var(--pos)}.tri.dn{border-top:9px solid var(--neg)}.tri.nt{width:9px;height:9px;border:0;border-radius:50%;background:var(--grey)}
-.verdict{border-radius:var(--cut-s);padding:16px 20px 16px 58px;font-size:17.5px;line-height:1.5;font-weight:600}
-.verdict::before{content:"";position:absolute;left:20px;top:50%;width:22px;height:22px;transform:translateY(-50%) rotate(45deg);background:var(--piano);border-radius:6px 1px 6px 1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 3px #fff,0 0 0 4px #BFC3C8}
-/* journey */
-.journey{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:relative}
-.journey::before{content:"";position:absolute;left:12.5%;right:12.5%;top:21px;height:1px;background:linear-gradient(90deg,var(--silver),var(--ink),var(--silver))}
-.journey::after{content:"";position:absolute;top:20px;left:12.5%;height:3px;border-radius:3px;width:calc(var(--prog,0) * 75%);background:linear-gradient(90deg,#BFC3C8,#111);transition:width .6s cubic-bezier(.3,1.2,.5,1);box-shadow:0 0 10px rgba(191,195,200,.8)}
-.jp{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:0 10px;position:relative;z-index:1}
-.jp[disabled]{cursor:not-allowed;opacity:.45}
-.jp .c{width:42px;height:42px;border-radius:14px 3px 14px 3px;display:grid;place-items:center;font-family:var(--head);font-weight:600;color:var(--lead);position:relative;
-  background:var(--glass) padding-box,var(--metal) border-box;border:1.5px solid transparent;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
-.jp:not([disabled]):hover .c{transform:scale(1.12)}
-.jp .n{font-weight:600;font-size:13.5px}
-.jp .d{font-size:12px;color:var(--grey);max-width:200px}
-.jp[aria-selected="true"] .c{background:var(--piano) padding-box,var(--metal) border-box;color:#fff}
-.jp[aria-selected="true"] .c::after{content:"";position:absolute;inset:-9px;border-radius:18px 4px 18px 4px;border:1px solid rgba(191,195,200,.9);animation:pulse 2.4s ease-out infinite}
-@keyframes pulse{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.3);opacity:0}}
-.jp:focus-visible .c{outline:2px solid var(--pos);outline-offset:3px}
-/* stage */
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 290px;border-radius:var(--cut);overflow:hidden}
-.work{padding:26px;min-width:0;display:flex;flex-direction:column;gap:18px}
-.learn{background:var(--piano);color:#C9CDD2;padding:26px 22px;display:flex;flex-direction:column;gap:14px;font-size:13px}
-.learn h3,.learn b{color:#fff}
-.learn .lbl{background:linear-gradient(90deg,#9EA2A8,#FFF 50%,#9EA2A8);-webkit-background-clip:text;background-clip:text}
-.learn ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
-.learn .tip{border-top:1px solid rgba(255,255,255,.14);padding-top:12px;font-size:12.5px;color:#AEB2B7}
-.pane[hidden]{display:none!important}
-.pane:not([hidden]){animation:rise .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* buttons */
-.btn{all:unset;cursor:pointer;position:relative;overflow:hidden;padding:11px 20px;border-radius:var(--cut-s);font-weight:600;font-size:13px;display:inline-flex;gap:8px;align-items:center;
-  background:var(--piano) padding-box,var(--metal) border-box;border:1px solid transparent;color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -10px rgba(0,0,0,.6);transition:transform .25s cubic-bezier(.3,1.6,.5,1),box-shadow .25s}
-.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(191,195,200,.45) 50%,transparent 60%);transform:translateX(-120%);animation:sweep 4.5s ease-in-out infinite}
-@keyframes sweep{0%,70%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
-.btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 16px 32px -12px rgba(0,0,0,.65),0 0 22px rgba(191,195,200,.55)}
-.btn:active{transform:translateY(1px) scale(.96)}
-.btn[disabled]{opacity:.4;pointer-events:none}
-.btn.line{background:var(--glass) padding-box,var(--metal) border-box;color:var(--ink)}
-.btn.line::after{display:none}
-.btn:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
-.ripple{position:absolute;border-radius:50%;transform:scale(0);background:radial-gradient(circle,rgba(255,255,255,.7),rgba(255,255,255,0) 70%);pointer-events:none;animation:rip .65s ease-out forwards}
-@keyframes rip{to{transform:scale(3.2);opacity:0}}
-/* step 1 */
-.drops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.drop{border-radius:var(--cut-s);padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;min-width:0;transition:transform .25s}
-.drop:hover{transform:translateY(-3px)}
+.sub{color:var(--plomo);max-width:640px;margin-top:10px;font-size:13.5px}
+/* título + línea con efecto Power Apps */
+.tline{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;padding-bottom:10px;border-bottom:2px solid;border-image:var(--linea-pa) 1}
+.tline.w{border-image:linear-gradient(90deg,#FFFFFF 0%,#BFC3C8 45%,#5A5E64 75%,rgba(90,94,100,0)) 1}
+.desc{font-size:13.5px;color:var(--plomo)}
+/* flechas de pasos */
+.chev{display:flex;filter:drop-shadow(0 0 .7px rgba(17,17,17,.55)) drop-shadow(0 2px 3px rgba(17,17,17,.10))}
+.cv{all:unset;cursor:pointer;flex:1;position:relative;min-height:78px;margin-left:-14px;padding:12px 40px 12px 44px;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%,26px 50%);background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(242,243,245,.92));transition:flex .5s ease,filter .3s ease}
+.cv:first-child{margin-left:0;padding-left:20px;clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%)}
+.cv::before{content:"";position:absolute;left:0;right:0;top:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0));pointer-events:none}
+.cv:not([disabled]):hover{filter:brightness(1.03)}
+.cv[disabled]{cursor:not-allowed}
+.cv[disabled] .nm,.cv[disabled] .no{opacity:.55}
+.cv .ic{grid-row:1/3;width:38px;height:38px;border-radius:12px 3px 12px 3px;display:grid;place-items:center;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1.3px #BFC3C8,0 1px 2px rgba(0,0,0,.12)}
+.cv .ic svg{width:19px;height:19px;stroke:#fff}
+.cv .no{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--plomo)}
+.cv .nm{font-family:var(--head);font-weight:600;font-size:15px;line-height:1.2}
+.cv .ds{grid-column:2;font-size:12px;color:var(--plomo);max-height:0;opacity:0;overflow:hidden;transition:max-height .45s ease,opacity .45s ease}
+.cv.done .no::after{content:"  ✓";color:#111}
+.cv[aria-selected="true"]{flex:1.7;color:#fff;background:var(--grafito)}
+.cv[aria-selected="true"]::before{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0))}
+.cv[aria-selected="true"]::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.12) 50%,transparent 58%);background-size:250% 100%;animation:barrido 3s ease-in-out infinite;pointer-events:none}
+@keyframes barrido{0%{background-position:120% 0}100%{background-position:-120% 0}}
+.cv[aria-selected="true"] .ic{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 1.5px #E6E8EB,0 0 0 4px rgba(255,255,255,.12)}
+.cv[aria-selected="true"] .no{color:#C9CDD2}
+.cv[aria-selected="true"] .ds{max-height:36px;opacity:1;color:#D3D6D9}
+.cv>*{position:relative;z-index:1}
+.cv:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
+/* panel de trabajo + franja de etapas */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;overflow:hidden}
+.work{position:relative;padding:26px 28px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.pane{display:flex;flex-direction:column;gap:18px;min-width:0}
+.pane:not([hidden]){animation:rise .4s ease}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.info{all:unset;cursor:pointer;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:15px;color:#fff;
+  background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:transform .25s ease}
+.info:hover{transform:scale(1.08)} .info:focus-visible{outline:2px solid var(--pos);outline-offset:3px}
+.pop{position:absolute;right:28px;top:72px;width:min(380px,calc(100% - 56px));z-index:6;padding:18px 20px;border-radius:var(--rs);color:#fff;
+  background:linear-gradient(160deg,rgba(46,48,53,.88),rgba(10,10,11,.90)) padding-box,var(--metal) border-box;border:1.3px solid transparent;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 6px rgba(0,0,0,.18);animation:aparece .3s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.pop .lbl{color:#BFC3C8} .pop h3{margin:4px 0 8px;color:#fff}
+.pop ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#D3D6D9}
+.pop b{color:#fff} .pop .tip{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.14);font-size:12.5px;color:#AEB2B7}
+.pop .x{all:unset;cursor:pointer;position:absolute;right:12px;top:10px;font-weight:700;color:#fff}
+.rail{background:var(--grafito);color:#fff;padding:26px 22px;display:flex;flex-direction:column;gap:18px;box-shadow:inset 1px 0 0 rgba(191,195,200,.5)}
+.rail .tline{margin-bottom:-6px;margin-top:2px}
+.work>.tline{margin-bottom:-6px}
+.etapas{position:relative;list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;justify-content:space-between;gap:20px;flex:1}
+.etapas::before{content:"";position:absolute;left:15px;top:16px;bottom:16px;width:2px;background:linear-gradient(180deg,rgba(191,195,200,.65),rgba(191,195,200,.25))}
+.etapas.run::after{content:"";position:absolute;left:12px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;top:16px;animation:recorre 3s linear infinite}
+@keyframes recorre{0%{top:16px;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:calc(100% - 24px);opacity:0}}
+.et{position:relative;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start}
+.et .c{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:600;font-size:13px;color:#C9CDD2;background:#1B1C1F;box-shadow:inset 0 0 0 1.5px #5A5E64;position:relative;z-index:1;transition:all .5s ease}
+.et b{display:block;font-weight:600;font-size:13.5px}
+.et small{display:block;font-size:12px;color:#AEB2B7}
+.et.done .c{background:#fff;color:#111;box-shadow:none}
+.et.on .c{background:#fff;color:#111;animation:halo 3s ease-out infinite}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}70%{box-shadow:0 0 0 10px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+.rail .pie{padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:12px;color:#AEB2B7}
+/* paso 1 */
+.drops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.drop{cursor:pointer;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0;transition:transform .25s ease}
+.drop:hover{transform:translateY(-2px)}
 .drop.over{outline:2px dashed #111;outline-offset:4px}
 .drop input{display:none}
-.fi{width:40px;height:40px;border-radius:10px 2px 10px 2px;background:var(--piano);display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px #BFC3C8}
-.fi svg{width:20px;height:20px}
-.drop .nm{font-weight:600;font-size:13.5px;word-break:break-word}
-.drop .mt{font-size:12px;color:var(--grey)}
-.st{font-size:11.5px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
-.st i{width:7px;height:7px;border-radius:50%;background:var(--grey);box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 0 4px currentColor}
+.fi{width:38px;height:38px;border-radius:10px 2px 10px 2px;background:var(--grafito);display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px #BFC3C8}
+.fi svg{width:19px;height:19px}
+.drop .nm{font-weight:600;font-size:14px;word-break:break-word}
+.drop .mt{font-size:12.5px;color:var(--plomo)}
+.st{font-size:12px;font-weight:600;display:inline-flex;gap:6px;align-items:center;color:var(--plomo)}
+.st i{width:8px;height:8px;border-radius:50%;background:#8A8D91;flex:none}
 .st.ok{color:var(--pos)}.st.ok i{background:var(--pos)}
 .st.err{color:var(--neg)}.st.err i{background:var(--neg)}
 .runrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .track{flex:1 1 240px;height:6px;border-radius:99px;overflow:hidden;background:linear-gradient(180deg,#E9EBED,#FFF);box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
-.fill{height:100%;width:0;background:linear-gradient(90deg,#BFC3C8,#3F4247 60%,#000);transition:width .4s ease}
-.log{font-size:12.5px;color:var(--lead);min-height:20px}
-/* step 2 */
-.semi{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#BFC3C8,#3F4247 60%,#000);transition:width .6s ease}
+.log{font-size:12.5px;color:var(--plomo);min-height:20px}
+/* paso 2 */
+.semi{display:grid;grid-template-columns:200px minmax(0,1fr);gap:22px;align-items:start}
 .ring{display:flex;flex-direction:column;align-items:center;gap:10px}
 .ring svg{width:180px;height:180px}
-.leg{display:flex;flex-direction:column;gap:6px;font-size:12px;width:100%}
+.leg{display:flex;flex-direction:column;gap:6px;font-size:12.5px;width:100%;color:var(--plomo)}
 .leg span{display:flex;gap:8px;align-items:center}
 .sw{width:10px;height:10px;border-radius:2px;flex:none}
-.rows{display:flex;flex-direction:column}
-.r{display:grid;grid-template-columns:minmax(150px,1.3fr) 140px minmax(120px,2fr) 54px;gap:12px;align-items:center;padding:7px 6px;border-radius:10px;transition:background .2s}
-.r:not(.hd):hover{background:rgba(255,255,255,.85)}
-.r.hd{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);font-weight:600}
+.rows{position:relative;overflow:hidden;border-radius:var(--rs);background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,249,250,.9)) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;padding-bottom:6px}
+.r{display:grid;grid-template-columns:minmax(150px,1.3fr) 150px minmax(110px,2fr) 54px;gap:12px;align-items:center;padding:7px 12px}
+.r:not(.hd):hover{background:rgba(17,17,17,.03)}
+.r.hd{background:var(--grafito);color:#fff;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:10px 12px;margin-bottom:4px}
+.r.hd>span{text-align:center}
 .r .a{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r>.tag,.r>.pc{justify-self:center}
 .bar{height:10px;border-radius:99px;display:flex;gap:2px;overflow:hidden;background:linear-gradient(180deg,#E9EBED,#FFF);box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
 .bar i{height:100%;border-radius:99px}
-.b1{background:var(--piano)}.b2{background:linear-gradient(180deg,#E3E5E8,#A9ADB2)}.b3{background:linear-gradient(180deg,#FF2A1F,#B80500)}
-.pc{background:var(--piano);color:#fff;border-radius:6px 1px 6px 1px;padding:1px 6px;font-size:12px;text-align:center;font-family:var(--head);font-weight:600}
-.tag{display:inline-flex;justify-content:center;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;white-space:nowrap;
-  background:var(--glass) padding-box,var(--metal) border-box;border:1px solid transparent;color:var(--lead)}
-.tag.ok{background:var(--piano) padding-box,var(--metal) border-box;color:#fff}
-.tag.bad{background:#fff;color:var(--neg);border:1px solid var(--neg)}
-.tag.pos{background:#fff;color:var(--pos);border:1px solid var(--pos)}
-details.map{border-radius:var(--cut-s);padding:12px 16px}
+.b1{background:var(--grafito)}.b2{background:linear-gradient(180deg,#E3E5E8,#A9ADB2)}.b3{background:linear-gradient(180deg,#FF2A1F,#B80500)}
+.pc{background:var(--grafito);color:#fff;border-radius:6px 1px 6px 1px;padding:1px 6px;font-size:12px;text-align:center;font-family:var(--head);font-weight:600}
+.tag{display:inline-flex;justify-content:center;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;white-space:nowrap;color:var(--plomo);background:#fff;box-shadow:inset 0 0 0 1px #BFC3C8}
+.tag.ok{color:#fff;background:var(--grafito);box-shadow:none}
+.tag.bad{color:var(--neg);box-shadow:inset 0 0 0 1px var(--neg)}
+.tag.pos{color:var(--pos);box-shadow:inset 0 0 0 1px var(--pos)}
+details.map{padding:12px 16px}
 details.map summary{cursor:pointer;font-weight:600}
 .maptbl{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:12px;align-items:center;font-size:13px}
-/* step 3 */
-.chips{display:flex;gap:4px;flex-wrap:wrap;position:relative;padding:4px;border-radius:99px;align-self:flex-start}
-.chip{all:unset;cursor:pointer;font-size:12px;font-weight:500;padding:5px 12px;border-radius:99px;position:relative;z-index:1;transition:color .25s,transform .25s cubic-bezier(.3,1.6,.5,1)}
-.chip:hover{transform:translateY(-1px)}
+.sel{appearance:none;-webkit-appearance:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);padding:7px 34px 7px 12px;border-radius:var(--rs);cursor:pointer;max-width:320px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23111' stroke-width='1.8'/%3E%3C/svg%3E") right 12px center no-repeat,linear-gradient(180deg,#FFFFFF,#F7F8F9);border:1.5px solid #CDD1D6}
+.sel.sm{font-size:12px;padding:5px 28px 5px 10px;background-position:right 10px center,0 0;max-width:260px}
+.sel:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
+/* paso 3 */
+.chips{display:flex;gap:4px;flex-wrap:wrap;position:relative;padding:4px;border-radius:99px;align-self:flex-start;background:linear-gradient(180deg,#fff,#F5F6F7) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent}
+.chip{all:unset;cursor:pointer;font-size:12px;font-weight:500;padding:5px 12px;border-radius:99px;position:relative;z-index:1;transition:color .25s}
 .chip b{font-family:var(--head)}
 .chip[aria-pressed="true"]{color:#fff}
 .chip:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
-.slider{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:99px;z-index:0;background:var(--piano);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px -6px rgba(0,0,0,.6);transition:left .45s cubic-bezier(.3,1.4,.5,1),width .45s cubic-bezier(.3,1.4,.5,1)}
-.tblwrap{overflow:auto;max-height:620px;border-radius:var(--cut-s)}
+.slider{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:99px;z-index:0;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:left .45s ease,width .45s ease}
+.tblwrap{overflow:auto;max-height:620px;border-radius:var(--rs);background:#fff;box-shadow:inset 0 0 0 1px #E3E5E8}
 table{border-collapse:collapse;width:100%;font-size:12.5px}
-th{background:var(--piano);color:#fff;font-weight:600;font-size:11.5px;padding:9px 10px;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:2}
+th{background:var(--grafito);color:#fff;font-weight:600;font-size:11.5px;padding:9px 10px;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:2}
 td{padding:8px 10px;border-top:1px solid #EEF0F2;vertical-align:top}
-tbody tr:hover{background:rgba(255,255,255,.9)}
-td.l{min-width:260px}
+tbody tr:hover{background:rgba(17,17,17,.025)}
+td.l{min-width:240px}
 td.c{text-align:center;white-space:nowrap}
-.why{font-size:11.5px;color:var(--grey);margin-top:2px}
-.sc{display:inline-block;min-width:30px;text-align:center;font-family:var(--head);font-weight:600;font-size:11px;padding:0 6px;border-radius:6px 1px 6px 1px;background:var(--piano);color:#fff}
-.empty{padding:26px;text-align:center;color:var(--grey)}
-/* step 4 */
-.outs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.out{border-radius:var(--cut-s);padding:18px;display:flex;flex-direction:column;gap:6px}
-.out .v{font-family:var(--head);font-size:32px;font-weight:300;line-height:1;background:linear-gradient(180deg,#3F4247,#000);-webkit-background-clip:text;background-clip:text;color:transparent}
-.out .to{font-size:12px;color:var(--grey)}
+.why{font-size:11.5px;color:var(--plomo);margin-top:2px}
+.sc{display:inline-block;min-width:30px;text-align:center;font-family:var(--head);font-weight:600;font-size:11px;padding:0 6px;border-radius:6px 1px 6px 1px;background:var(--grafito);color:#fff}
+.empty{padding:26px;text-align:center;color:var(--plomo)}
+/* paso 4 */
+.outs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.out{padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.out .v{font-family:var(--head);font-size:32px;font-weight:700;line-height:1}
+.out .to{font-size:12.5px;color:var(--plomo)}
 .toast{font-size:12.5px;font-weight:600;color:var(--pos);min-height:20px}
-/* criteria */
+/* unidad y programa */
+.sel-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.selc{padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.selc .rowh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid;border-image:var(--linea-pa) 1}
+.dd{appearance:none;-webkit-appearance:none;font:inherit;font-family:var(--head);font-weight:600;font-size:16px;color:var(--ink);width:100%;padding:11px 52px 11px 14px;border-radius:var(--rs);cursor:pointer;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23040405'/%3E%3Cstop offset='.5' stop-color='%2345474D'/%3E%3Cstop offset='1' stop-color='%23040405'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='13' cy='13' r='12' fill='url(%23g)' stroke='%23BFC3C8'/%3E%3Cpath d='M8.5 11l4.5 4.5 4.5-4.5' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 10px center/26px no-repeat,
+  linear-gradient(180deg,#FFFFFF,#F7F8F9);border:1.5px solid #CDD1D6;box-shadow:inset 0 1px 2px rgba(17,17,17,.06);transition:border-color .2s}
+.dd:hover{border-color:#9EA2A8} .dd:focus-visible{outline:2px solid var(--pos);outline-offset:2px} .dd[disabled]{cursor:default;color:var(--plomo)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;padding-top:2px}
+.mini div{display:flex;flex-direction:column;align-items:center;min-width:0}
+.mini b{font-family:var(--head);font-size:22px;font-weight:700;line-height:1.15}
+.mini span{font-size:12.5px;color:var(--plomo)}
+.count{font-size:11.5px;font-weight:600;color:var(--plomo);padding:2px 10px;border-radius:99px;background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 1px #BFC3C8;white-space:nowrap}
+.count.dark{color:#fff;padding:5px 14px;font-size:12px;background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+/* cifras */
 .sec{display:flex;flex-direction:column;gap:14px}
-.sec>header{display:flex;flex-direction:column;gap:4px}
-.crit{border-radius:var(--cut);overflow:hidden}
-.crit td:first-child{font-family:var(--head);font-weight:600;text-align:center;color:var(--grey);width:44px}
+.exec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.k{padding:16px 20px 18px;min-width:0}
+.k .t{font-weight:700;font-size:13px;padding-bottom:8px;margin-bottom:6px;border-bottom:2px solid;border-image:var(--linea-pa) 1}
+.k .v{font-family:var(--head);font-size:38px;font-weight:700;line-height:1.1;letter-spacing:-.03em}
+.k .s{font-size:12.5px;color:var(--plomo)} .k .s.p{color:var(--pos)}
+.tri{position:absolute;right:16px;bottom:16px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;z-index:2}
+.tri.up{border-bottom:9px solid var(--pos)}.tri.dn{border-top:9px solid var(--neg)}.tri.nt{width:9px;height:9px;border:0;border-radius:50%;background:#8A8D91}
+.verdict{padding:16px 22px;font-size:16px;line-height:1.5;font-weight:600}
+.verdict::before{content:"En una frase";display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--plomo);margin-bottom:4px;position:relative;z-index:1}
+/* asignaturas */
+.asig{padding:20px 22px}
+.asig .head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:14px;border-bottom:2px solid;border-image:var(--linea-pa) 1}
+.yr{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);margin:16px 0 10px}
+.yr::after{content:"";flex:1;height:2px;background:var(--linea-pa)}
+.yr:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.it{display:grid;grid-template-columns:18px 1fr auto;gap:4px 10px;align-items:center;padding:9px 12px;border-radius:var(--rs);min-width:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(248,249,250,.9)) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(17,17,17,.08);animation:rise .4s ease both}
+.it .ck{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;color:#fff;background:#C9CDD2}
+.it .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
+.it .n{font-family:var(--head);font-weight:600;font-size:13px;color:var(--plomo)}
+.it.leido .ck{background:var(--grafito)}
+.it.err .ck{background:var(--neg)}
+.it .dot{grid-column:2/4;display:flex;gap:6px;align-items:center;font-size:11.5px;color:var(--plomo)}
+.dot i{width:7px;height:7px;border-radius:50%;flex:none}
+.d-ok{background:#111}.d-mid{background:#AEB4BC}.d-bad{background:var(--neg)}.d-new{background:#fff;box-shadow:inset 0 0 0 1.5px var(--pos)}
+.vacio{font-size:13px;color:var(--plomo)}
+/* criterios */
+.crit{padding:0;overflow:hidden}
+.crit .tline{padding:18px 22px 10px}
+.crit table{font-size:13px}
+.crit th{position:static}
+.crit td{padding:10px 14px}
+.crit td:first-child{font-family:var(--head);font-weight:600;text-align:center;color:var(--plomo);width:44px}
 .crit td.n{font-weight:600}
-.foot{font-size:12px;color:var(--grey);border-top:1px solid var(--hair);padding-top:14px}
-@media (max-width:900px){header.top{grid-template-columns:1fr}.ctx{align-items:flex-start}
-  .exec{grid-template-columns:repeat(2,minmax(0,1fr))}.journey{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:18px}.journey::before,.journey::after{display:none}
-  .stage{grid-template-columns:1fr}.semi,.outs,.drops,.maptbl{grid-template-columns:1fr}.r{grid-template-columns:1fr 54px}.r .tag,.r .bar{grid-column:1/-1}.r.hd{display:none}}
+.foot{font-size:12px;color:var(--plomo);border-top:1px solid var(--linea);padding-top:14px}
+@media (max-width:980px){.stage{grid-template-columns:1fr}.drops,.sel-row,.outs,.semi,.maptbl{grid-template-columns:1fr}.exec{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chev{flex-direction:column;filter:none}.cv,.cv:first-child{clip-path:none;margin:0 0 6px;border-radius:var(--rs);box-shadow:inset 0 0 0 1px #BFC3C8}
+  .r{grid-template-columns:1fr 54px}.r .tag,.r .bar{grid-column:1/-1}.r.hd{display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div>
-      <span class="lbl">Bibliotecas UAI · Colecciones</span>
-      <h1 class="title">Revisor de <b>Syllabus</b></h1>
-      <p class="sub">Compara los syllabus que llegan con el consolidado y con las existencias (FOLIO y Alma). Entrega los 3 casos: qué se agrega, qué se deja igual y qué sale, más la bibliografía básica que falta comprar.</p>
-    </div>
-    <div class="ctx">
-      <span class="muted">Programa del consolidado</span>
-      <select class="sel" id="prog" disabled><option>Carga el consolidado primero</option></select>
-      <span class="muted" id="ctxinfo">Los archivos no salen de este computador.</span>
-    </div>
+    <span class="eyebrow">Bibliotecas · Bibliografía obligatoria</span>
+    <h1 class="title">Comprobador de <b>Syllabus</b></h1>
+    <p class="sub">Compara los syllabus que llegan con el consolidado y con las existencias. Entrega los 3 casos: qué se agrega, qué se deja igual y qué sale, más la bibliografía básica que falta comprar.</p>
   </header>
+
+  <nav class="chev" role="tablist" aria-label="Pasos">
+    <button class="cv jp" role="tab" id="j1" aria-selected="true" data-p="p1" data-t="Cargar archivos"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg></span><span><span class="no">PASO 01</span><br><span class="nm">Cargar</span></span><span class="ds">Syllabus, consolidado y existencias</span></button>
+    <button class="cv jp" role="tab" id="j2" aria-selected="false" data-p="p2" data-t="Semáforo por asignatura" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="18" r="2.5"/></svg></span><span><span class="no">PASO 02</span><br><span class="nm">Semáforo</span></span><span class="ds">Qué asignatura cambió y cuánto cubrimos</span></button>
+    <button class="cv jp" role="tab" id="j3" aria-selected="false" data-p="p3" data-t="Revisar títulos" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span><span><span class="no">PASO 03</span><br><span class="nm">Revisar</span></span><span class="ds">Título por título, dudosos primero</span></button>
+    <button class="cv jp" role="tab" id="j4" aria-selected="false" data-p="p4" data-t="Exportar" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span><span><span class="no">PASO 04</span><br><span class="nm">Exportar</span></span><span class="ds">Excel con Guía, Cruce y Tablas</span></button>
+  </nav>
+
+  <section class="stage glass">
+    <div class="work">
+      <div class="tline"><h2 id="ptit">Cargar archivos</h2><button class="info" id="infoBtn" aria-expanded="false" aria-label="Cómo leerlo">i</button></div>
+      <div class="pop" id="pop" hidden><button class="x" id="popX" aria-label="Cerrar">✕</button><div id="learn"></div></div>
+      <!-- 1 -->
+      <div class="pane" id="p1" role="tabpanel" aria-labelledby="j1">
+        <p class="desc">Haz clic en cada tarjeta o arrastra los archivos encima. Las existencias son opcionales, pero sin ellas no se sabe qué hay que comprar.</p>
+        <div class="drops">
+          <label class="drop glass s" id="dSyl"><input type="file" id="fSyl" multiple accept=".zip,.pdf,.docx">
+            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>
+            <span class="lbl">1 · Syllabus que llegaron</span><span class="nm" id="nSyl">Zip, PDF o Word</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="st" id="sSyl"><i></i>Pendiente</span></label>
+          <label class="drop glass s" id="dCon"><input type="file" id="fCon" accept=".xlsx,.xlsm,.xls">
+            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span>
+            <span class="lbl">2 · Lo ya revisado</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="st" id="sCon"><i></i>Pendiente</span></label>
+          <label class="drop glass s" id="dCat"><input type="file" id="fCat" multiple accept=".csv,.xlsx,.xls,.txt">
+            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.5 1-4 15-3.5-1z"/></svg></span>
+            <span class="lbl">3 · Existencias</span><span class="nm" id="nCat">Hoja Existencia y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="st" id="sCat"><i></i>Opcional</span></label>
+        </div>
+        <div class="runrow"><button class="btn" id="go" disabled>Comparar ahora</button><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div></div>
+        <div class="log" id="log" aria-live="polite">Carga los syllabus y el consolidado para empezar.</div>
+      </div>
+      <!-- 2 -->
+      <div class="pane" id="p2" role="tabpanel" aria-labelledby="j2" hidden>
+        <p class="desc">Bibliografía básica de los syllabus nuevos frente al consolidado y a las existencias.</p>
+        <details class="map glass s" id="mapbox"><summary>Correspondencia de asignaturas (revísala si algo no calza)</summary><div class="maptbl" id="maptbl"></div></details>
+        <div class="semi">
+          <div class="ring">
+            <svg viewBox="0 0 200 200" role="img" id="ringsvg" aria-label="Cobertura de la bibliografía básica">
+              <defs><linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#45474D"/><stop offset=".5" stop-color="#141518"/><stop offset="1" stop-color="#040405"/></linearGradient>
+              <linearGradient id="gS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F8F9"/><stop offset=".45" stop-color="#BFC3C8"/><stop offset="1" stop-color="#8A8D91"/></linearGradient>
+              <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF2A1F"/><stop offset="1" stop-color="#B80500"/></linearGradient></defs>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#F1F2F3" stroke-width="16"/>
+              <circle id="a1" cx="100" cy="100" r="80" fill="none" stroke="url(#gB)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle id="a2" cx="100" cy="100" r="80" fill="none" stroke="url(#gS)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle id="a3" cx="100" cy="100" r="80" fill="none" stroke="url(#gR)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <text id="ringv" x="100" y="98" text-anchor="middle" font-family="Sora, sans-serif" font-weight="600" font-size="26" fill="#111">—</text>
+              <text id="ringt" x="100" y="120" text-anchor="middle" font-size="11" fill="#3F4247"></text>
+            </svg>
+            <div class="leg" id="leg"></div>
+          </div>
+          <div class="rows" id="rows"></div>
+        </div>
+      </div>
+      <!-- 3 -->
+      <div class="pane" id="p3" role="tabpanel" aria-labelledby="j3" hidden>
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><p class="desc">Cambia el tipo o la decisión con los menús. Todo se recalcula al momento.</p>
+          <select class="sel sm" id="fAsig" aria-label="Filtrar por asignatura"><option value="">Todas las asignaturas</option></select></div>
+        <div class="chips" role="group" aria-label="Filtro" id="chips"></div>
+        <div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+      </div>
+      <!-- 4 -->
+      <div class="pane" id="p4" role="tabpanel" aria-labelledby="j4" hidden>
+        <p class="desc">Un Excel con la Guía, el Cruce (formato del consolidado), las Tablas y el respaldo de lo leído.</p>
+        <div class="outs" id="outs"></div>
+        <div class="runrow"><button class="btn" id="dl">Descargar Excel</button></div>
+        <div class="toast" id="toast" aria-live="polite"></div>
+      </div>
+    </div>
+    <aside class="rail">
+      <div class="tline w"><h2 style="color:#fff">Etapas del cruce</h2></div>
+      <p class="desc" style="color:#AEB2B7">Avance de la comparación, paso a paso.</p>
+      <ol class="etapas" id="etapas">
+        <li class="et"><span class="c">1</span><span><b>Leer syllabus</b><small id="e1">Esperando archivos</small></span></li>
+        <li class="et"><span class="c">2</span><span><b>Cruzar con el consolidado</b><small id="e2">Título por título</small></span></li>
+        <li class="et"><span class="c">3</span><span><b>Buscar en existencias</b><small id="e3">FOLIO y Alma</small></span></li>
+        <li class="et"><span class="c">4</span><span><b>Preparar el Excel</b><small id="e4">Guía, Cruce y Tablas</small></span></li>
+      </ol>
+      <div class="pie">El punto blanco recorre la línea mientras trabaja. La etapa activa tiene un halo.</div>
+    </aside>
+  </section>
+
+  <section class="sel-row">
+    <div class="selc glass"><div class="rowh"><h3>Unidad académica</h3><span class="count" id="uCount">Sin archivo</span></div>
+      <select class="dd" id="uSel" aria-label="Unidad académica" disabled><option>Carga el consolidado</option></select>
+      <div class="mini" id="uMini"><div><b>—</b><span>Programas</span></div><div><b>—</b><span>Asignaturas</span></div><div><b>—</b><span>Títulos</span></div></div></div>
+    <div class="selc glass"><div class="rowh"><h3>Programa</h3><span class="count" id="pCount">Sin archivo</span></div>
+      <select class="dd" id="prog" aria-label="Programa" disabled><option>Carga el consolidado</option></select>
+      <div class="mini" id="pMini"><div><b>—</b><span>Nivel</span></div><div><b>—</b><span>Asignaturas</span></div><div><b>—</b><span>Títulos</span></div></div></div>
+  </section>
 
   <section class="sec" id="resumen" hidden>
     <div class="exec" id="kpis"></div>
-    <div class="verdict glass" id="verdict"></div>
+    <div class="verdict glass s" id="verdict"></div>
   </section>
 
-  <section class="sec">
-    <header><span class="lbl">Cómo funciona</span><h2>Cuatro pasos, de los syllabus al consolidado</h2></header>
-    <nav class="journey" role="tablist" aria-label="Pasos">
-      <button class="jp" role="tab" id="j1" aria-selected="true" data-p="p1"><span class="c">1</span><span class="n">Cargar</span><span class="d">Syllabus, consolidado y catálogo</span></button>
-      <button class="jp" role="tab" id="j2" aria-selected="false" data-p="p2" disabled><span class="c">2</span><span class="n">Semáforo</span><span class="d">Qué asignatura cambió y cuánto cubrimos</span></button>
-      <button class="jp" role="tab" id="j3" aria-selected="false" data-p="p3" disabled><span class="c">3</span><span class="n">Revisar</span><span class="d">Título por título, con los casos dudosos primero</span></button>
-      <button class="jp" role="tab" id="j4" aria-selected="false" data-p="p4" disabled><span class="c">4</span><span class="n">Exportar</span><span class="d">Excel con Guía, Cruce y Tablas</span></button>
-    </nav>
-
-    <div class="stage glass">
-      <div class="work">
-        <!-- 1 -->
-        <div class="pane" id="p1" role="tabpanel" aria-labelledby="j1">
-          <div style="display:flex;flex-direction:column;gap:18px">
-            <div><h2>Cargar archivos</h2><p class="muted">Haz clic en cada tarjeta o arrastra los archivos encima. Las existencias son opcionales, pero sin ellas no se sabe qué hay que comprar.</p></div>
-            <div class="drops">
-              <label class="drop glass" id="dSyl"><input type="file" id="fSyl" multiple accept=".zip,.pdf,.docx">
-                <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>
-                <span class="lbl">1 · Syllabus que llegaron</span><span class="nm" id="nSyl">Zip, PDF o Word</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="st" id="sSyl"><i></i>Pendiente</span></label>
-              <label class="drop glass" id="dCon"><input type="file" id="fCon" accept=".xlsx,.xlsm,.xls">
-                <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span>
-                <span class="lbl">2 · Lo ya revisado</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="st" id="sCon"><i></i>Pendiente</span></label>
-              <label class="drop glass" id="dCat"><input type="file" id="fCat" multiple accept=".csv,.xlsx,.xls,.txt">
-                <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.5 1-4 15-3.5-1z"/></svg></span>
-                <span class="lbl">3 · Existencias</span><span class="nm" id="nCat">Hoja Existencia (CSV o Historico Existencia) y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="st" id="sCat"><i></i>Opcional</span></label>
-            </div>
-            <div class="runrow"><button class="btn" id="go" disabled>Comparar ahora</button><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div></div>
-            <div class="log" id="log" aria-live="polite">Carga los syllabus y el consolidado para empezar.</div>
-          </div>
-        </div>
-        <!-- 2 -->
-        <div class="pane" id="p2" role="tabpanel" aria-labelledby="j2" hidden>
-          <div style="display:flex;flex-direction:column;gap:18px">
-            <div><h2>Semáforo por asignatura</h2><p class="muted">Bibliografía básica de los syllabus nuevos frente al consolidado y al catálogo.</p></div>
-            <details class="map glass" id="mapbox"><summary>Correspondencia de asignaturas (revísala si algo no calza)</summary><div class="maptbl" id="maptbl"></div></details>
-            <div class="semi">
-              <div class="ring">
-                <svg viewBox="0 0 200 200" role="img" id="ringsvg" aria-label="Cobertura de la bibliografía básica">
-                  <defs><linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3F4247"/><stop offset=".5" stop-color="#111"/><stop offset="1" stop-color="#000"/></linearGradient>
-                  <linearGradient id="gS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F8F9"/><stop offset=".45" stop-color="#BFC3C8"/><stop offset="1" stop-color="#8A8D91"/></linearGradient>
-                  <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF2A1F"/><stop offset="1" stop-color="#B80500"/></linearGradient></defs>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#F1F2F3" stroke-width="16"/>
-                  <circle id="a1" cx="100" cy="100" r="80" fill="none" stroke="url(#gB)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
-                  <circle id="a2" cx="100" cy="100" r="80" fill="none" stroke="url(#gS)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
-                  <circle id="a3" cx="100" cy="100" r="80" fill="none" stroke="url(#gR)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 100 100)"/>
-                  <text id="ringv" x="100" y="98" text-anchor="middle" font-family="Sora, sans-serif" font-weight="300" font-size="28" fill="#111">—</text>
-                  <text id="ringt" x="100" y="120" text-anchor="middle" font-size="11" fill="#8A8D91"></text>
-                </svg>
-                <div class="leg" id="leg"></div>
-              </div>
-              <div class="rows" id="rows"></div>
-            </div>
-          </div>
-        </div>
-        <!-- 3 -->
-        <div class="pane" id="p3" role="tabpanel" aria-labelledby="j3" hidden>
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-end"><div><h2>Revisar títulos</h2><p class="muted">Cambia el tipo o la decisión con los menús. Todo se recalcula al momento.</p></div>
-              <select class="sel sm" id="fAsig"><option value="">Todas las asignaturas</option></select></div>
-            <div class="chips glass" role="group" aria-label="Filtro" id="chips"></div>
-            <div class="tblwrap glass"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
-          </div>
-        </div>
-        <!-- 4 -->
-        <div class="pane" id="p4" role="tabpanel" aria-labelledby="j4" hidden>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div><h2>Exportar</h2><p class="muted">Un Excel con la Guía, el Cruce (formato del consolidado), las Tablas y el respaldo de lo leído.</p></div>
-            <div class="outs" id="outs"></div>
-            <div class="runrow"><button class="btn" id="dl">Descargar Excel</button></div>
-            <div class="toast" id="toast" aria-live="polite"></div>
-          </div>
-        </div>
-      </div>
-      <aside class="learn" id="learn" aria-live="polite"></aside>
-    </div>
+  <section class="asig glass">
+    <div class="head"><h3 id="aTit">Asignaturas</h3><span class="count dark" id="aCount">Sin archivos</span></div>
+    <div id="asigs"><p class="vacio">Aquí aparecen las asignaturas del programa elegido y, al comparar, los syllabus que se van leyendo.</p></div>
   </section>
 
-  <section class="sec">
-    <header><span class="lbl">Reglas de la comparación</span><h2>Criterios que aplica la herramienta</h2><p class="muted">Lo que no calza en una regla queda marcado para revisión a mano.</p></header>
-    <div class="crit glass"><table>
+  <section class="crit glass">
+    <div class="tline"><h2>Criterios que aplica la herramienta</h2></div>
+    <table>
       <thead><tr><th>#</th><th>Situación</th><th>Regla</th></tr></thead>
       <tbody>
         <tr><td>1</td><td class="n">¿Es el mismo título?</td><td>Parecido 85 o más: ya estaba · 70 a 84: revisar a mano · menos de 70: nuevo</td></tr>
-        <tr><td>2</td><td class="n">Los 3 casos</td><td>1. Nuevo: se agrega · 2. Ya estaba: se deja igual (también su tipo) · 3. Ya no está: en rojo, pasa a «Títulos Sacados de Syllabus»; no se borra</td></tr>
+        <tr><td>2</td><td class="n">Los 3 casos</td><td>1. Nuevo: se agrega · 2. Ya estaba: se deja igual (también su tipo) · 3. Ya no está: en rojo, pasa a «Títulos Sacados de Syllabus». No se borra</td></tr>
         <tr><td>3</td><td class="n">¿Sale del consolidado?</td><td>Solo si el título ya no está en el syllabus nuevo de esa misma asignatura, o si la asignatura ya no se dicta</td></tr>
         <tr><td>4</td><td class="n">No llegó el syllabus</td><td>No se hace nada</td></tr>
         <tr><td>5</td><td class="n">Edición</td><td>Cuenta la misma edición o una superior a la que pide el syllabus, para el 1 y para la compra</td></tr>
-        <tr><td>6</td><td class="n">Existencias</td><td>1 si hay ejemplares en cualquier biblioteca o si lo tenemos en digital; el HRID va en «Observación»</td></tr>
+        <tr><td>6</td><td class="n">Existencias</td><td>1 si hay ejemplares en cualquier biblioteca o si lo tenemos en digital. El HRID va en «Observación»</td></tr>
         <tr><td>7</td><td class="n">Links</td><td>Si la cita trae un link, queda en «Observación» con vínculo</td></tr>
         <tr><td>8</td><td class="n">Compra</td><td>Solo bibliografía básica, libro o e-book, que no tengamos. La complementaria no se compra</td></tr>
         <tr><td>9</td><td class="n">Leyes, sentencias, web</td><td>Acceso libre por confirmar. Los artículos cuentan para la cobertura</td></tr>
         <tr><td>10</td><td class="n">Mismo libro en 2 asignaturas</td><td>Una fila por asignatura, una sola compra</td></tr>
       </tbody>
-    </table></div>
+    </table>
   </section>
 
-  <p class="foot">Revisor de Syllabus · Bibliotecas UAI. La página lee los archivos en este navegador; no guarda ni envía datos a ningún servidor. Solo recuerda en este computador las correspondencias de asignaturas que corrijas.</p>
+  <p class="foot">Herramienta de trabajo desarrollada por el Analista de Servicio de Datos y Gestión de Bibliotecas · Pablo Salas</p>
 </div>
 
 <script>
@@ -418,16 +493,19 @@ function guessSubject(lines,fname){
 function versionYear(lines){const RNG=/(?<!\d)(20\d{2})\s*[-\/]\s*(20\d{2})(?!\d)/;lines=lines.map(l=>l.replace(/(\d)\s+(?=\d)/g,"$1")); // «202 6» → «2026»
   for(let i=0;i<Math.min(lines.length,40);i++){if(/facultad|escuela/i.test(lines[i])){for(let j=i;j<Math.min(i+4,lines.length);j++){const m=lines[j].match(RNG);if(m)return m[1]+"/"+m[2];const n=lines[j].match(/^\D{0,25}(20\d{2})\D{0,12}$/);if(n)return n[1]}}}
   for(const l of lines.slice(0,40)){const m=l.match(RNG);if(m)return m[1]+"/"+m[2]}return String(new Date().getFullYear())}
-async function readSyllabusFiles(files){const list=[];
+async function readSyllabusFiles(files,onProg){const list=[];let total=0;
+  for(const f of files){const n=f.name.toLowerCase();if(n.endsWith(".zip")){f._z=await JSZip.loadAsync(await f.arrayBuffer());total+=Object.values(f._z.files).filter(e=>{const en=e.name.toLowerCase();return!e.dir&&!en.includes("__macosx")&&!en.split("/").pop().startsWith("~$")&&(en.endsWith(".pdf")||en.endsWith(".docx"))}).length}
+    else if(n.endsWith(".pdf")||n.endsWith(".docx"))total++}
+  const tick=()=>{if(onProg)onProg(list,total)};
   const handle=async(name,buf)=>{const ext=name.toLowerCase().split(".").pop();let rd;
     try{rd=ext==="pdf"?await pdfRead(buf):await docxRead(buf)}catch(e){list.push({file:name,error:"No se pudo leer el archivo",lines:[],refs:[],links:[]});return}
     const lines=cleanLines(rd.lines);const sy={file:name,lines,links:rd.links,header:lines.slice(0,15).join(" "),subject:guessSubject(lines,name),version:versionYear(lines),refs:parseRefs(lines)};
     assignLinks(sy);list.push(sy)};
   for(const f of files){const n=f.name.toLowerCase();
-    if(n.endsWith(".zip")){const z=await JSZip.loadAsync(await f.arrayBuffer());
+    if(n.endsWith(".zip")){const z=f._z||await JSZip.loadAsync(await f.arrayBuffer());
       for(const e of Object.values(z.files)){const en=e.name.toLowerCase();if(e.dir||en.includes("__macosx")||en.split("/").pop().startsWith("~$"))continue;
-        if(en.endsWith(".pdf")||en.endsWith(".docx")){setLog("Leyendo "+e.name.split("/").pop()+"…");await handle(e.name,await e.async("arraybuffer"))}}}
-    else if(n.endsWith(".pdf")||n.endsWith(".docx")){setLog("Leyendo "+f.name+"…");await handle(f.name,await f.arrayBuffer())}}
+        if(en.endsWith(".pdf")||en.endsWith(".docx")){setLog("Leyendo "+e.name.split("/").pop()+"…");await handle(e.name,await e.async("arraybuffer"));tick();await sleep(60)}}}
+    else if(n.endsWith(".pdf")||n.endsWith(".docx")){setLog("Leyendo "+f.name+"…");await handle(f.name,await f.arrayBuffer());tick();await sleep(60)}}
   return list}
 
 /* ===================== consolidado ===================== */
@@ -553,15 +631,15 @@ function compute(){const prog=S.con.data.filter(r=>r.programa===S.prog);prog.for
 
 /* ===================== render ===================== */
 const pct=x=>Math.round(x*100)+"%";
-function renderAll(){compute();renderKpis();renderSem();renderMap();renderChips();renderTable();renderOuts();moveSlider()}
+function renderAll(){compute();renderKpis();renderSem();renderMap();renderChips();renderTable();renderOuts();renderUP();renderAsig();moveSlider()}
 function cov(rows){const bas=rows.filter(x=>x.tipoEf==="Básica"&&x.caso!=="Omitido");const si=bas.filter(x=>x.disp==="Sí").length,no=bas.filter(x=>x.disp==="No").length;return{bas,si,no,pv:bas.length-si-no}}
 function renderKpis(){const sb=S.res.subjects,rows=S.res.rows;const{bas,si,no,pv}=cov(rows);const nc=rows.filter(x=>x.compra).length;
   const comp=sb.filter(s=>s.cls==="ok").length,volver=sb.filter(s=>s.estado==="Volver a analizar").length,reg=sb.filter(s=>s.estado==="Registrar completa").length;
   const cv=bas.length?(pv?pct(si/bas.length)+"–"+pct((si+pv)/bas.length):pct(si/bas.length)):"—";const c=S.res.cuadre;
-  $("#kpis").innerHTML=`<div class="k glass"><div class="t">Asignaturas completas</div><div class="v num">${comp}</div><div class="s p">de ${sb.length} syllabus · no se vuelven a revisar</div><span class="tri up"></span></div>
-  <div class="k glass"><div class="t">Volver a analizar</div><div class="v num">${volver}</div><div class="s">tienen títulos nuevos o que salieron</div><span class="tri dn"></span></div>
+  $("#kpis").innerHTML=`<div class="k glass"><div class="t">Asignaturas completas</div><div class="v num">${comp}</div><div class="s p">De ${sb.length} syllabus · No se vuelven a revisar</div><span class="tri up"></span></div>
+  <div class="k glass"><div class="t">Volver a analizar</div><div class="v num">${volver}</div><div class="s">Tienen títulos nuevos o que salieron</div><span class="tri dn"></span></div>
   <div class="k glass"><div class="t">Cobertura básica</div><div class="v num">${cv}</div><div class="s">${si} de ${bas.length} seguros${pv?" · "+pv+" por verificar":""}</div><span class="tri nt"></span></div>
-  <div class="k glass"><div class="t">Candidatos a compra</div><div class="v num">${nc}</div><div class="s">básica sin copia física ni digital</div><span class="tri dn"></span></div>`;
+  <div class="k glass"><div class="t">Candidatos a compra</div><div class="v num">${nc}</div><div class="s">Básica sin copia física ni digital</div><span class="tri dn"></span></div>`;
   $("#verdict").textContent=`${c.syl} títulos en ${sb.length} syllabus: ${c.nuevo} nuevos (se agregan) y ${c.ya} que ya estaban (se dejan igual). Del consolidado salen ${c.conSale} filas (en rojo, a «Títulos Sacados de Syllabus»). ${nc?`Hay ${nc} títulos de bibliografía básica para comprar`:"No hay bibliografía básica para comprar"}${pv?` y ${pv} por verificar`:""}.`;
   $("#resumen").hidden=false;
   const C=2*Math.PI*80,gap=6,T=Math.max(bas.length,1);[["a1",si,0],["a2",pv,si],["a3",no,si+pv]].forEach(([id,v,o])=>{const e=$("#"+id);if(!v){e.setAttribute("stroke-dasharray",`0 ${C}`);return}
@@ -607,14 +685,46 @@ function renderOuts(){const c=S.res.cuadre;const nc=S.res.rows.filter(x=>x.compr
   [nc,"Lista de compra","→ solo básica, misma edición o superior"],[S.res.subjects.length,"Asignaturas","→ correspondencia y año de versión"],[c.conTotal,"Filas del consolidado revisadas","→ cuadre en la hoja Guía"]]
   .map(([v,t,d])=>`<div class="out glass"><span class="v num">${v}</span><h3>${t}</h3><span class="to">${d}</span></div>`).join("")}
 const LEARN={
-p1:`<span class="lbl">Cómo leerlo</span><h3>Qué entra</h3><ol><li><b>Syllabus</b>: el zip tal como llega por correo, o los PDF y Word sueltos.</li><li><b>Consolidado</b>: el Excel de pregrado o postgrado, sin modificarlo.</li><li><b>Catálogo</b>: la hoja <b>Existencia</b> del Historico Existencia (mejor exportada aparte, en CSV) y, si lo tienes, BUAI_Ejemplares de Alma.</li></ol><div class="tip">Del Historico Existencia solo se lee la hoja Existencia; las hojas con datos personales no se abren.</div>`,
+p1:`<span class="lbl">Cómo leerlo</span><h3>Qué entra</h3><ol><li><b>Syllabus</b>: el zip tal como llega por correo, o los PDF y Word sueltos.</li><li><b>Consolidado</b>: el Excel de pregrado o postgrado, sin modificarlo.</li><li><b>Existencias</b>: la hoja <b>Existencia</b> del Historico Existencia (mejor exportada aparte, en CSV) y, si lo tienes, BUAI_Ejemplares de Alma.</li></ol><div class="tip">Del Historico Existencia solo se lee la hoja Existencia; las hojas con datos personales no se abren.</div>`,
 p2:`<span class="lbl">Cómo leerlo</span><h3>Barra de cada asignatura</h3><ol><li><b>Negro</b>: básica que ya tenemos (física o digital, misma edición o superior).</li><li><b>Plata</b>: por verificar (parecidos o acceso libre).</li><li><b>Rojo</b>: básica sin recurso: se compra.</li></ol><div class="tip">Si una asignatura del consolidado no trae syllabus, no se hace nada. Márcala como «Ya no se dicta» solo si salió de la malla.</div>`,
 p3:`<span class="lbl">Cómo leerlo</span><h3>Los 3 casos</h3><ol><li><b>1. Nuevo</b>: se agrega.</li><li><b>2. Ya estaba</b>: se deja igual (también su tipo).</li><li><b>3. Ya no está</b>: en rojo, pasa a «Títulos Sacados de Syllabus». No se borra.</li></ol><div class="tip">Si la lectura del PDF cortó mal una referencia, márcala como «Omitir».</div>`,
 p4:`<span class="lbl">Cómo leerlo</span><h3>Qué trae el Excel</h3><ol><li><b>Guía</b>: cómo leerlo y el cuadre de totales.</li><li><b>Cruce</b>: una fila por título, con el formato del consolidado.</li><li><b>Tablas</b>: resumen de los 3 casos, compra y cobertura.</li></ol><div class="tip">El HRID, los ejemplares y los links quedan en «Observación», agregados sin borrar lo que ya tenía.</div>`};
 
 /* ===================== navegación ===================== */
-function show(id){$$(".jp").forEach((s,i)=>{const on=s.id===id;s.setAttribute("aria-selected",on);$("#"+s.dataset.p).hidden=!on;if(on){$("#learn").innerHTML=LEARN[s.dataset.p];$(".journey").style.setProperty("--prog",i/3)}});setTimeout(moveSlider,60)}
+function show(id){const ai=$$(".jp").findIndex(s=>s.id===id);$$(".jp").forEach((s,i)=>{const on=s.id===id;s.setAttribute("aria-selected",on);s.classList.toggle("done",i<ai);$("#"+s.dataset.p).hidden=!on;if(on){$("#learn").innerHTML=LEARN[s.dataset.p];$("#ptit").textContent=s.dataset.t}});setTimeout(moveSlider,60)}
 $$(".jp").forEach(s=>s.onclick=()=>{if(!s.disabled)show(s.id)});show("j1");
+/* botón «i»: tarjeta «Cómo leerlo» */
+function popOpen(v){$("#pop").hidden=!v;$("#infoBtn").setAttribute("aria-expanded",v)}
+$("#infoBtn").onclick=()=>popOpen($("#pop").hidden);$("#popX").onclick=()=>popOpen(false);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")popOpen(false)});
+/* etapas del cruce (franja grafito) */
+function etapa(i,txt){$$(".et").forEach((el,j)=>{el.classList.toggle("on",j===i);el.classList.toggle("done",j<i)});$("#etapas").classList.toggle("run",i>=0&&i<4);if(txt&&i>=0&&i<4)$("#e"+(i+1)).textContent=txt}
+
+/* ===================== unidad, programa y asignaturas ===================== */
+const uniName=u=>String(u||"").replace(/_/g," ").replace(/\s+/g," ").trim()||"Sin unidad";
+const progUnit=p=>{const r=S.con.data.find(x=>x.programa===p);return r?uniName(r.unidad):""};
+function fillUnits(sel){const us=[...new Set(S.con.data.filter(r=>r.programa).map(r=>uniName(r.unidad)))].sort((a,b)=>a.localeCompare(b,"es"));
+  const u=sel&&us.includes(sel)?sel:us[0];$("#uSel").innerHTML=us.map(x=>`<option ${x===u?"selected":""}>${esc(x)}</option>`).join("");$("#uSel").disabled=false;
+  $("#uCount").textContent=`${us.length} unidad${us.length>1?"es":""} en el archivo`;fillProgs(u)}
+function fillProgs(u,keep){const ps=[...new Set(S.con.data.filter(r=>r.programa&&uniName(r.unidad)===u).map(r=>r.programa))].sort((a,b)=>a.localeCompare(b,"es"));
+  const p=keep&&ps.includes(keep)?keep:ps[0];$("#prog").innerHTML=ps.map(x=>`<option ${x===p?"selected":""}>${esc(x)}</option>`).join("");$("#prog").disabled=false;
+  $("#pCount").textContent=`${ps.length} programa${ps.length>1?"s":""} en esta unidad`;S.prog=p||"";renderUP();if(!S.res)renderAsig()}
+function renderUP(){if(!S.con)return;const u=$("#uSel").value,ur=S.con.data.filter(r=>r.programa&&uniName(r.unidad)===u),pr=S.con.data.filter(r=>r.programa===S.prog);
+  const n=a=>a.toLocaleString("es-CL");
+  $("#uMini").innerHTML=`<div><b class="num">${n(new Set(ur.map(r=>r.programa)).size)}</b><span>Programas</span></div><div><b class="num">${n(new Set(ur.map(r=>r.programa+"|"+r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(ur.length)}</b><span>Títulos</span></div>`;
+  $("#pMini").innerHTML=`<div><b>${esc(S.con.nivel)}</b><span>Nivel</span></div><div><b class="num">${n(new Set(pr.map(r=>r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(pr.length)}</b><span>Títulos</span></div>`}
+const dCls=c=>c==="ok"?"d-ok":c==="bad"?"d-bad":"d-mid";
+function itHTML(nm,n,cls,txt,i,extra){return`<div class="it ${extra||"leido"}" style="animation-delay:${Math.min(i,30)*25}ms" title="${esc(nm)}"><span class="ck">${extra==="pend"?"":extra==="err"?"!":"✓"}</span><span class="nm">${esc(nm)}</span><span class="n num">${n}</span>${txt?`<span class="dot"><i class="${cls}"></i>${esc(txt)}</span>`:""}</div>`}
+function renderAsig(live){const box=$("#asigs");if(!S.con)return;
+  if(live){$("#aTit").textContent="Syllabus leídos";$("#aCount").textContent=`${live.length} de ${live.total} leídos`;
+    box.innerHTML=`<div class="grid">${live.map((sy,i)=>{const bad=sy.error||!sy.refs.length;return itHTML(sy.subject,sy.refs.length,bad?"d-bad":"",bad?"Sin bibliografía leída":"",i,bad?"err":"leido")}).join("")}</div>`;return}
+  if(S.res){const sb=S.res.subjects;$("#aTit").textContent=`Asignaturas · ${S.prog}`;$("#aCount").textContent=`${sb.length} de ${sb.length} leídas`;
+    let h=`<div class="yr">Con syllabus nuevo</div><div class="grid">${sb.map((s,i)=>itHTML(s.name,s.n,s.estado==="Registrar completa"?"d-new":dCls(s.cls),s.estado,i,s.sy.error||!s.sy.refs.length?"err":"leido")).join("")}</div>`;
+    if(S.res.sinSyl.length)h+=`<div class="yr">En el consolidado, sin syllabus nuevo</div><div class="grid">${S.res.sinSyl.map((s,i)=>itHTML(s.asig,s.n,s.nodicta?"d-bad":"d-mid",s.nodicta?"Ya no se dicta":"No llegó syllabus",i,"pend")).join("")}</div>`;
+    box.innerHTML=h;return}
+  const pr=S.con.data.filter(r=>r.programa===S.prog);const m=new Map();pr.forEach(r=>m.set(r.asignatura,(m.get(r.asignatura)||0)+1));
+  $("#aTit").textContent=`Asignaturas · ${S.prog}`;$("#aCount").textContent=`${m.size} en el consolidado`;
+  box.innerHTML=m.size?`<div class="yr">En el consolidado</div><div class="grid">${[...m].sort((a,b)=>a[0].localeCompare(b[0],"es")).map(([a,n],i)=>itHTML(a,n,"","",i,"pend")).join("")}</div>`:'<p class="vacio">Este programa no tiene filas en el consolidado.</p>'}
 
 /* ===================== carga de archivos ===================== */
 function bindDrop(drop,input,fn){input.onchange=()=>fn([...input.files]);
@@ -627,7 +737,7 @@ async function loadCatalogs(files){let all={recs:[],rows:0,baja:0,tipos:[]};for(
 bindDrop($("#dSyl"),$("#fSyl"),files=>{if(!files.length)return;S.sylFiles=files;$("#nSyl").textContent=files.map(f=>f.name).join(", ");$("#mSyl").textContent=files.length+" archivo(s)";st("#sSyl","ok","Listo para leer");ready()});
 bindDrop($("#dCon"),$("#fCon"),async files=>{const f=files[0];if(!f)return;$("#nCon").textContent=f.name;st("#sCon","","Leyendo… (puede tardar unos segundos)");await sleep(30);
   try{S.con=readConsolidado(await f.arrayBuffer());const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
-    $("#prog").innerHTML=progs.map(p=>`<option>${esc(p)}</option>`).join("");$("#prog").disabled=false;
+    fillUnits();
     $("#mCon").textContent=`${S.con.nivel} · ${S.con.data.length.toLocaleString("es-CL")} filas · ${progs.length} programas`;st("#sCon","ok","Listo");}
   catch(e){S.con=null;st("#sCon","err",e.message)}ready()});
 bindDrop($("#dCat"),$("#fCat"),async files=>{if(!files.length)return;st("#sCat","","Leyendo… (la hoja Existencia puede tardar un minuto)");await sleep(30);
@@ -635,14 +745,21 @@ bindDrop($("#dCat"),$("#fCat"),async files=>{if(!files.length)return;st("#sCat",
     $("#mCat").textContent=`${[...new Set(all.tipos)].join(" + ")} · ${all.recs.length.toLocaleString("es-CL")} títulos · ${all.rows.toLocaleString("es-CL")} ejemplares${all.baja?" · "+all.baja.toLocaleString("es-CL")+" dados de baja (no cuentan)":""}`;st("#sCat","ok","Listo");
     if(all.recs.length<1000)st("#sCat","err",`Solo ${all.recs.length} títulos: ¿el informe tiene un filtro de fecha?`);if(S.res){renderAll()}}
   catch(e){S.cat=null;st("#sCat","err",e.message)}});
-$("#prog").onchange=()=>{S.prog=$("#prog").value;if(S.res){S.syl.forEach(s=>delete s.mapOverride);renderAll()}};
+$("#prog").onchange=()=>{S.prog=$("#prog").value;renderUP();if(S.res){S.syl.forEach(s=>delete s.mapOverride);renderAll()}else renderAsig()};
+$("#uSel").onchange=()=>{S.progChosen=true;fillProgs($("#uSel").value);if(S.res){S.syl.forEach(s=>delete s.mapOverride);renderAll()}};
 $("#fAsig").onchange=renderTable;
-$("#go").onclick=async()=>{$("#go").disabled=true;try{setLog("Leyendo syllabus…",10);S.syl=await readSyllabusFiles(S.sylFiles);
-    const nref=S.syl.reduce((a,s)=>a+s.refs.length,0),bad=S.syl.filter(s=>s.error||!s.refs.length);setLog(`${S.syl.length} syllabus leídos · ${nref} referencias. Comparando…`,55);await sleep(30);
-    if(!S.prog||S.prog===$("#prog").options[0]?.value&&!S.progChosen){S.prog=guessProgram();$("#prog").value=S.prog}
-    renderAll();setLog(`Listo: ${S.syl.length} syllabus, ${nref} referencias, programa «${S.prog}».`+(bad.length?` Ojo: no se leyó bibliografía en ${bad.map(s=>s.file.split("/").pop()).join(", ")}.`:""),100);
-    $$(".jp").forEach(j=>j.disabled=false);await sleep(400);show("j2");window.__listo2=true}
-  catch(e){console.error(e);setLog("Error: "+e.message,0);window.__error=e.message}$("#go").disabled=false};
+$("#go").onclick=async()=>{$("#go").disabled=true;try{S.res=null;etapa(0,"Preparando…");setLog("Leyendo syllabus…",5);
+    S.syl=await readSyllabusFiles(S.sylFiles,(list,total)=>{etapa(0,`${list.length} de ${total}`);$("#fill").style.width=(5+list.length/Math.max(total,1)*45)+"%";list.total=total;renderAsig(list)});
+    const nref=S.syl.reduce((a,s)=>a+s.refs.length,0),bad=S.syl.filter(s=>s.error||!s.refs.length);
+    etapa(1,`${nref} referencias`);setLog(`${S.syl.length} syllabus leídos · ${nref} referencias. Cruzando con el consolidado…`,60);await sleep(500);
+    if(!S.progChosen){const g=guessProgram();fillUnits(progUnit(g));fillProgs($("#uSel").value,g)}
+    renderAll();
+    etapa(2,S.cat?`${S.cat.recs.length.toLocaleString("es-CL")} títulos revisados`:"Sin existencias cargadas");setLog("Buscando los títulos nuevos en las existencias…",80);await sleep(500);
+    etapa(3,"Guía, Cruce y Tablas");setLog("Preparando el Excel…",92);await sleep(400);
+    etapa(4);$("#e4").textContent="Listo para descargar";
+    setLog(`Listo: ${S.syl.length} syllabus, ${nref} referencias, programa «${S.prog}».`+(bad.length?` Ojo: no se leyó bibliografía en ${bad.map(s=>s.file.split("/").pop()).join(", ")}.`:""),100);
+    $$(".jp").forEach(j=>j.disabled=false);await sleep(500);show("j2");window.__listo2=true}
+  catch(e){console.error(e);etapa(-1);setLog("Error: "+e.message,0);window.__error=e.message}$("#go").disabled=false};
 $("#prog").addEventListener("change",()=>S.progChosen=true);
 
 /* ===================== exportar ===================== */
@@ -747,7 +864,7 @@ addEventListener("resize",moveSlider);
 if(new URLSearchParams(location.search).has("prueba")){(async()=>{try{const get=async(u,n)=>{const r=await fetch(u);if(!r.ok)throw new Error(u);return new File([await r.blob()],n)};
   const syl=await get("prueba/syllabus.zip","syllabus.zip"),con=await get("prueba/consolidado.xlsx","consolidado.xlsx");
   S.sylFiles=[syl];st("#sSyl","ok","Listo para leer");$("#nSyl").textContent="syllabus.zip";
-  S.con=readConsolidado(await con.arrayBuffer());const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort();$("#prog").innerHTML=progs.map(p=>`<option>${esc(p)}</option>`).join("");$("#prog").disabled=false;st("#sCon","ok","Listo");
+  S.con=readConsolidado(await con.arrayBuffer());fillUnits();st("#sCon","ok","Listo");
   const cats=[];for(const n of["prueba/existencia.csv","prueba/catalogo.csv"]){try{cats.push(await get(n,n.split("/")[1]))}catch(e){}}
   if(cats.length){S.cat=await loadCatalogs(cats);st("#sCat","ok","Listo")}
   ready();window.__listo=true}catch(e){window.__error=e.message}})()}
