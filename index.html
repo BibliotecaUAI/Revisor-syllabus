@@ -503,6 +503,19 @@ table.t .sel.sm{font-style:normal}
 .foot{max-width:1148px;margin:40px auto 0;text-align:center;border-top:0}
 /* tarjetas de asignaturas: nombre completo en hasta 2 líneas y todas del mismo tamaño */
 #asigs .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;align-items:stretch}
+/* todas las tablas: la columna eje en letra normal (sin cursiva) y en negrita */
+table.t tbody tr>td:first-child{font-style:normal;font-weight:600}
+/* correspondencia en tabla */
+#maptbl{display:block}
+.mapt td{vertical-align:middle}
+.mapt td.l{min-width:220px}
+.mapt .sel.sm{max-width:300px;width:100%}
+.mapt tr.sinpar>td:first-child{box-shadow:inset 3px 0 0 var(--neg)}
+.maph{font-size:14px;margin:18px 0 4px}
+/* exportar: el texto y el botón ya no se cortan */
+.exp p{flex:1;min-width:0}
+.exp .btn{flex:none}
+.outs{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 /* desplegables en negro metálico (todos iguales) */
 .tgl{color:#fff;border:1.3px solid transparent;background:var(--grafito) padding-box,var(--bordeplata) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 2px rgba(0,0,0,.2);position:relative;overflow:hidden}
 .tgl:hover{background:var(--grafito) padding-box,var(--bordeplata) border-box;filter:brightness(1.12)}
@@ -1050,12 +1063,14 @@ function renderSem(){const mp=S.v.progs.length>1;$("#rows").innerHTML='<div clas
   return`<div class="r" title="${esc(s.prog+" · "+s.sy.file)}"><span class="a">${esc(s.name)}${mp?`<span class="why" style="display:block">${esc(s.prog)}</span>`:""}</span><span class="tag ${s.cls}">${s.estado}</span><span class="bar" title="${s.si} disponibles · ${s.pv} por verificar · ${s.no} sin recurso, de ${s.bas}">${s.si?`<i class="b1" style="width:${s.si/t*100}%"></i>`:""}${s.pv?`<i class="b2" style="width:${s.pv/t*100}%"></i>`:""}${s.no?`<i class="b3" style="width:${s.no/t*100}%"></i>`:""}</span><span class="pc num">${s.bas?Math.round(s.si/t*100)+"%":"—"}</span></div>`}).join("")}
 function renderMap(){const P=allProgs(),vs=S.syl.filter(sy=>inView(sy.prog)),mp=S.v.progs.length>1;
   const como=sy=>S.forceProg?"programa elegido en «Ver todas»":sy.progOverride?"programa elegido a mano":sy.porCarpeta?"programa según la carpeta del zip":sy.cand&&sy.cand.length?"programa según sus asignaturas":"sin asignatura en común";
-  $("#maptbl").innerHTML='<b>Syllabus</b><b>Programa y asignatura en el consolidado</b>'+vs.map(sy=>{const i=S.syl.indexOf(sy);const subs=programSubjects(sy.prog);
-    return`<span>${esc(sy.subject)}<div class="why">${esc(sy.file.split("/").pop())} · ${sy.refs.length} referencias · año ${esc(sy.version)} · ${como(sy)}${sy.ambig?" · revisar: la asignatura se repite en otro programa":""}</div></span>
-  <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><select class="sel sm" data-prog="${i}" aria-label="Programa">${P.map(p=>`<option ${p===sy.prog?"selected":""}>${esc(p)}</option>`).join("")}</select>
-  <select class="sel sm" data-map="${i}" aria-label="Asignatura"><option value="">(no está: registrar completa)</option>${subs.map(s=>`<option ${s===sy.map?"selected":""}>${esc(s)}</option>`).join("")}</select></span>`}).join("")+
-  (S.v.sinSyl.length?`<b style="grid-column:1/-1;margin-top:10px">Asignaturas del consolidado sin syllabus nuevo</b><span class="why" style="grid-column:1/-1">Si no llegó el syllabus, no se hace nada. Marca solo las que ya no se dictan (revísalo en la malla de la web): sus títulos salen.</span>`+
-    S.v.sinSyl.map((s,j)=>`<span>${esc(s.asig)}<div class="why">${s.n} filas${mp?" · "+esc(s.prog):""}</div></span><label style="display:flex;gap:8px;align-items:center;font-size:12.5px"><input type="checkbox" data-nod="${j}" ${s.nodicta?"checked":""}> Ya no se dicta</label>`).join(""):"");
+  /* correspondencia en formato tabla: una fila por syllabus, con sus menús para corregir programa y asignatura */
+  $("#maptbl").innerHTML=`<div class="tw"><div class="scroll" style="max-height:440px"><table class="t mapt"><thead><tr><th style="text-align:left">Syllabus</th><th style="text-align:left">Archivo y lectura</th><th>Programa</th><th>Asignatura en el consolidado</th></tr></thead><tbody>`+vs.map(sy=>{const i=S.syl.indexOf(sy);const subs=programSubjects(sy.prog);
+    return`<tr${sy.map?"":' class="sinpar"'}><td>${esc(sy.subject)}</td><td class="l"><span class="why" style="margin:0">${esc(sy.file.split("/").pop())} · ${sy.refs.length} referencias · año ${esc(sy.version)} · ${como(sy)}${sy.ambig?" · revisar: la asignatura se repite en otro programa":""}</span></td>
+  <td class="c"><select class="sel sm" data-prog="${i}" aria-label="Programa">${P.map(p=>`<option ${p===sy.prog?"selected":""}>${esc(p)}</option>`).join("")}</select></td>
+  <td class="c"><select class="sel sm" data-map="${i}" aria-label="Asignatura"><option value="">(no está: registrar completa)</option>${subs.map(s=>`<option ${s===sy.map?"selected":""}>${esc(s)}</option>`).join("")}</select></td></tr>`}).join("")+`</tbody></table></div></div>`+
+  (S.v.sinSyl.length?`<h3 class="maph">Asignaturas del consolidado sin syllabus nuevo</h3><p class="why" style="margin:0 0 8px">Si no llegó el syllabus, no se hace nada. Marca solo las que ya no se dictan (revísalo en la malla de la web): sus títulos salen.</p>
+    <div class="tw"><div class="scroll" style="max-height:300px"><table class="t mapt"><thead><tr><th style="text-align:left">Asignatura del consolidado</th>${mp?"<th>Programa</th>":""}<th>Filas</th><th>Ya no se dicta</th></tr></thead><tbody>`+
+    S.v.sinSyl.map((s,j)=>`<tr><td>${esc(s.asig)}</td>${mp?`<td class="c">${esc(s.prog)}</td>`:""}<td class="c">${s.n}</td><td class="c"><input type="checkbox" data-nod="${j}" ${s.nodicta?"checked":""} aria-label="Ya no se dicta"></td></tr>`).join("")+`</tbody></table></div></div>`:"");
   $$("[data-prog]").forEach(el=>el.onchange=()=>{const sy=S.syl[+el.dataset.prog];sy.progOverride=el.value;delete sy.mapOverride;renderAll()});
   $$("[data-map]").forEach(el=>el.onchange=()=>{const sy=S.syl[+el.dataset.map];sy.mapOverride=el.value;sy.progOverride=sy.prog;EQUIV[norm(sy.subject)]=el.value;const own=lsGet("rs_equiv",{});own[norm(sy.subject)]=el.value;lsSet("rs_equiv",own);renderAll()});
   $$("[data-nod]").forEach(el=>el.onchange=()=>{const s=S.v.sinSyl[+el.dataset.nod];const l=new Set(NODICTA[s.prog]||[]);el.checked?l.add(s.asig):l.delete(s.asig);NODICTA[s.prog]=[...l];lsSet("rs_nodicta",NODICTA);renderAll()});
@@ -1404,7 +1419,20 @@ $("#xpc").onclick=()=>{$("#xp").classList.remove("open");$$("#dcard .rw").forEac
 $("#xpv").onclick=()=>{const m={c1:"c1",c2:"c2",c3:"c3",compra:"compra",rev:"rev"};S.filter=m[XPK]||"rev";renderChips();renderTable();openT("tRev",true);goSec("s3");setTimeout(moveSlider,400)};
 /* tarjetas de asignaturas: si el nombre no cabe en 2 líneas, la letra se achica hasta que cabe completo */
 function fitNames(){$$("#asigs .it .nm").forEach(n=>{let f=12.5;n.style.fontSize=f+"px";while(n.scrollHeight>n.clientHeight+1&&f>9){f-=.5;n.style.fontSize=f+"px"}})}
-const _ra=renderAsig;renderAsig=function(...a){_ra(...a);fitNames()};
+/* antes de comparar se muestra solo lo cargado (los syllabus que llegaron, por carpeta), nunca un programa cualquiera del consolidado */
+let SYLN=[],lastFiles=null;
+async function listSyl(){const out=[];for(const f of S.sylFiles||[]){const n=f.name.toLowerCase();
+    if(n.endsWith(".zip")){try{f._z=f._z||await JSZip.loadAsync(await f.arrayBuffer());for(const e of Object.values(f._z.files)){const en=e.name.toLowerCase();if(e.dir||en.includes("__macosx")||en.split("/").pop().startsWith("~$"))continue;
+      if(en.endsWith(".pdf")||en.endsWith(".docx")){const p=e.name.split("/").filter(Boolean);out.push({folder:p.length>1?p[p.length-2]:"",name:p[p.length-1]})}}}catch(e){}}
+    else if(n.endsWith(".pdf")||n.endsWith(".docx"))out.push({folder:"",name:f.name})}SYLN=out}
+function renderLoaded(){const box=$("#asigs");
+  if(!SYLN.length){$("#aTit").textContent="Syllabus cargados";$("#aCount").textContent=S.sylFiles?"Leyendo la lista…":"Sin syllabus";box.innerHTML='<p class="vacio">Carga los syllabus: aquí aparecen los que llegaron. Al comparar, la unidad y el programa se detectan solos.</p>';return}
+  const grupos=new Map();SYLN.forEach(s=>{const g=s.folder||"Sin carpeta";if(!grupos.has(g))grupos.set(g,[]);grupos.get(g).push(s)});
+  $("#aTit").textContent="Syllabus cargados";$("#aCount").textContent=`${SYLN.length} archivo${SYLN.length>1?"s":""}${grupos.size>1?` · ${grupos.size} carpetas`:""} · la unidad y el programa se detectan al comparar`;
+  let h="",k=0;for(const[g,L]of grupos){h+=`<div class="yr">${esc(g)}</div><div class="grid">${L.map(s=>itHTML(s.name.replace(/\.(pdf|docx)$/i,""),"","","",k++,"pend")).join("")}</div>`}box.innerHTML=h}
+const _ra=renderAsig;renderAsig=function(live,...a){if(!live&&!S.res)renderLoaded();else _ra(live,...a);fitNames()};
+const _ready=ready;ready=function(){_ready();if(S.sylFiles&&S.sylFiles!==lastFiles){lastFiles=S.sylFiles;renderAsig();listSyl().then(()=>{if(!S.res)renderAsig()})}};
+renderAsig();
 addEventListener("resize",()=>requestAnimationFrame(fitNames));
 /* inicio */
 setMb();spy();addEventListener("load",()=>{setMb();spy();fitNames()});
