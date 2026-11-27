@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Comprobador de Syllabus</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@300;400;600;700&display=swap">
+<title>Syllabus Match · Bibliotecas UAI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@300;400;600;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -17,7 +17,8 @@
   --metal:linear-gradient(135deg,#FFFFFF 0%,#C9CDD2 20%,#F7F8F9 38%,#9EA2A8 58%,#EEF0F2 78%,#BFC3C8 100%);
   --bordeplata:linear-gradient(135deg,#FDFDFE,#C3C8CF 25%,#F2F3F5 50%,#AEB4BC 75%,#E6E8EB);
   --vidrio:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.78));
-  --linea-pa:linear-gradient(90deg,#111 0%,#8A8D91 45%,#DADCDF 75%,rgba(218,220,223,0));
+  --cel:#6493B5; /* celeste UAI (pantone 7454): solo adorno, nunca para datos */
+  --linea-pa:linear-gradient(90deg,#111 0%,#6493B5 38%,rgba(100,147,181,.35) 70%,rgba(100,147,181,0));
   --head:"Sora",system-ui,sans-serif; --text:"Inter",system-ui,sans-serif;
   --r:22px 4px 22px 4px; --rs:14px 3px 14px 3px;
 }
@@ -29,6 +30,7 @@ html{background:
   radial-gradient(120% 90% at 30% 0%,#FFFFFF 0%,#F7F7F7 55%,#EDEDEE 100%) fixed;min-height:100%}
 body{margin:0;color:var(--ink);font-family:var(--text);font-size:14.5px;line-height:1.55;padding:0 0 70px 12px}
 body::before{content:"";position:fixed;left:0;top:0;bottom:0;width:12px;background:linear-gradient(90deg,#040405,#2E3035 45%,#45474D 55%,#040405)}
+body::after{content:"";position:fixed;left:12px;top:0;bottom:0;width:2px;background:var(--cel);pointer-events:none}
 .wrap{max-width:1220px;margin:0 auto;padding:30px 36px 0;display:flex;flex-direction:column;gap:22px}
 h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-.02em}
 h2{font-size:22px;font-weight:600} h3{font-size:15px;font-weight:600}
@@ -52,8 +54,8 @@ a{color:var(--pos)}
 .ripple{position:absolute;border-radius:50%;transform:scale(0);background:radial-gradient(circle,rgba(255,255,255,.6),rgba(255,255,255,0) 70%);pointer-events:none;animation:rip .65s ease-out forwards}
 @keyframes rip{to{transform:scale(3.2);opacity:0}}
 /* encabezado */
-header.top{display:block;padding-bottom:18px;border-bottom:1px solid var(--linea)}
-.eyebrow{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:4px}
+header.top{display:block;padding-bottom:18px;border-bottom:2px solid;border-image:linear-gradient(90deg,#6493B5 0%,rgba(100,147,181,.35) 50%,rgba(100,147,181,0)) 1}
+.eyebrow{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--cel);margin-bottom:4px}
 .title{font-size:clamp(30px,4.4vw,48px);font-weight:300;line-height:1.02;letter-spacing:-.035em;margin-left:-.045em}
 .title b{font-weight:700;background:linear-gradient(100deg,#111 0%,#111 40%,#8A8D91 48%,#FFF 50%,#8A8D91 52%,#111 60%,#111 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s ease-in-out infinite}
 @keyframes shine{0%{background-position:100% 0}55%,100%{background-position:0 0}}
@@ -77,11 +79,11 @@ header.top{display:block;padding-bottom:18px;border-bottom:1px solid var(--linea
 .cv .nm{font-family:var(--head);font-weight:600;font-size:15px;line-height:1.2}
 .cv .ds{grid-column:2;font-size:12px;color:var(--plomo);max-height:0;opacity:0;overflow:hidden;transition:max-height .45s ease,opacity .45s ease}
 .cv.done .no::after{content:"  ✓";color:#111}
-.cv[aria-selected="true"]{flex:1.7;color:#fff;background:var(--grafito)}
+.cv[aria-selected="true"]{flex:1.7;color:#fff;background:var(--grafito);box-shadow:inset 0 -3px 0 var(--cel)}
 .cv[aria-selected="true"]::before{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0))}
 .cv[aria-selected="true"]::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.12) 50%,transparent 58%);background-size:250% 100%;animation:barrido 3s ease-in-out infinite;pointer-events:none}
 @keyframes barrido{0%{background-position:120% 0}100%{background-position:-120% 0}}
-.cv[aria-selected="true"] .ic{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 1.5px #E6E8EB,0 0 0 4px rgba(255,255,255,.12)}
+.cv[aria-selected="true"] .ic{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 1.5px var(--cel),0 0 0 4px rgba(100,147,181,.18)}
 .cv[aria-selected="true"] .no{color:#C9CDD2}
 .cv[aria-selected="true"] .ds{max-height:36px;opacity:1;color:#D3D6D9}
 .cv>*{position:relative;z-index:1}
@@ -114,7 +116,7 @@ header.top{display:block;padding-bottom:18px;border-bottom:1px solid var(--linea
 .et .c{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:600;font-size:13px;color:#C9CDD2;background:#1B1C1F;box-shadow:inset 0 0 0 1.5px #5A5E64;position:relative;z-index:1;transition:all .5s ease}
 .et b{display:block;font-weight:600;font-size:13.5px}
 .et small{display:block;font-size:12px;color:#AEB2B7}
-.et.done .c{background:#fff;color:#111;box-shadow:none}
+.et.done .c{background:var(--cel);color:#fff;box-shadow:none}
 .et.on .c{background:#fff;color:#111;animation:halo 3s ease-out infinite}
 @keyframes halo{0%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}70%{box-shadow:0 0 0 10px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 .rail .pie{padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:12px;color:#AEB2B7}
@@ -171,7 +173,7 @@ details.map summary{cursor:pointer;font-weight:600}
 .chip b{font-family:var(--head)}
 .chip[aria-pressed="true"]{color:#fff}
 .chip:focus-visible{outline:2px solid var(--pos);outline-offset:2px}
-.slider{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:99px;z-index:0;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:left .45s ease,width .45s ease}
+.slider{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:99px;z-index:0;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 var(--cel);transition:left .45s ease,width .45s ease}
 .tblwrap{overflow:auto;max-height:620px;border-radius:var(--rs);background:#fff;box-shadow:inset 0 0 0 1px #E3E5E8}
 table{border-collapse:collapse;width:100%;font-size:12.5px}
 th{background:var(--grafito);color:#fff;font-weight:600;font-size:11.5px;padding:9px 10px;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:2}
@@ -200,7 +202,25 @@ td.c{text-align:center;white-space:nowrap}
 .mini div{display:flex;flex-direction:column;align-items:center;min-width:0}
 .mini b{font-family:var(--head);font-size:22px;font-weight:700;line-height:1.15}
 .mini span{font-size:12.5px;color:var(--plomo)}
-.count{font-size:11.5px;font-weight:600;color:var(--plomo);padding:2px 10px;border-radius:99px;background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 1px #BFC3C8;white-space:nowrap}
+.count{font-size:11.5px;font-weight:600;color:var(--plomo);padding:2px 10px;border-radius:99px;background:rgba(255,255,255,.85);box-shadow:inset 0 0 0 1px rgba(100,147,181,.45);white-space:nowrap}
+.selfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:-4px;min-height:0}
+.selfoot:has(.det[hidden]):has(.link[hidden]){display:none}
+.det{font-size:12.5px;color:var(--pos);display:flex;gap:6px;align-items:center;min-width:0}
+.det i{width:8px;height:8px;border-radius:50%;background:var(--pos);flex:none}
+.det.gr{color:var(--plomo)}.det.gr i{background:#8A8D91}
+.link{font-size:12px;font-weight:600;color:var(--plomo);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.link:hover{color:var(--ink)}
+.aviso{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;padding:14px 20px;border-radius:var(--rs);
+  background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(250,250,251,.93)) padding-box,linear-gradient(135deg,#E10600,#FF8A85 50%,#E10600) border-box;border:1.5px solid transparent}
+.aviso .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--head);font-weight:700;background:linear-gradient(180deg,#FF2A1F,#B80500)}
+.aviso b.t{display:block;font-family:var(--head);font-size:14.5px}
+.aviso p{font-size:13px;color:var(--plomo)}
+.aviso ul{margin:4px 0;padding-left:18px;font-size:13px;color:var(--plomo)}
+.aviso.info{background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(250,250,251,.93)) padding-box,var(--bordeplata) border-box}
+.aviso.info .ic{background:var(--grafito)}
+.tam{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;font-weight:600;color:#111;padding:3px 10px 3px 4px;border-radius:99px;
+  background:linear-gradient(180deg,#fff,#F3F4F5) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent}
+.tam i{font-style:normal;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;background:var(--grafito);flex:none}
 .count.dark{color:#fff;padding:5px 14px;font-size:12px;background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 /* cifras */
 .sec{display:flex;flex-direction:column;gap:14px}
@@ -234,6 +254,18 @@ td.c{text-align:center;white-space:nowrap}
 /* criterios */
 .crit{padding:0;overflow:hidden}
 .crit .tline{padding:18px 22px 10px}
+details.crit>summary{list-style:none;cursor:pointer;user-select:none}
+details.crit>summary::-webkit-details-marker{display:none}
+details.crit:not([open])>summary{padding-bottom:16px}
+details.crit>summary:focus-visible{outline:2px solid var(--pos);outline-offset:-4px}
+details.crit[open] table{animation:rise .35s ease}
+.tog{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600;color:var(--plomo)}
+.tog .tt::after{content:"Ver criterios"}
+details.crit[open] .tog .tt::after{content:"Ocultar"}
+.tog .tc{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:transform .3s ease}
+.tog .tc::before{content:"";width:7px;height:7px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:translateY(-2px) rotate(45deg)}
+details.crit[open] .tog .tc{transform:rotate(180deg)}
+details.crit>summary:hover .tc{filter:brightness(1.15)}
 .crit table{font-size:13px}
 .crit th{position:static}
 .crit td{padding:10px 14px}
@@ -244,48 +276,315 @@ td.c{text-align:center;white-space:nowrap}
   .chev{flex-direction:column;filter:none}.cv,.cv:first-child{clip-path:none;margin:0 0 6px;border-radius:var(--rs);box-shadow:inset 0 0 0 1px #BFC3C8}
   .r{grid-template-columns:1fr 54px}.r .tag,.r .bar{grid-column:1/-1}.r.hd{display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* =====================================================================
+   SYLLABUS MATCH · diseño aprobado (boceto C v10, 27-11-2026)
+   Página continua: encabezado de vidrio con título y pasos, una sola tarjeta blanca con los 4 pasos
+   en acordeón, línea celeste y notas al margen en tarjeta negra.
+   Rendimiento: el fondo va en una capa fija (no se redibuja al bajar) y solo el encabezado usa desenfoque.
+   ===================================================================== */
+:root{--pg:14px;--rg:36px 18px 36px 18px;--rc:30px 10px 30px 10px;--sep:28px;
+  --metal4:linear-gradient(135deg,#45474D 0%,#7E8288 14%,#BFC3C8 34%,#E6E8EB 52%,#B4B9C0 72%,#D5D8DC 88%,#9EA2A8 100%);
+  --lcel:linear-gradient(90deg,#6493B5 0%,#6493B5 28%,#C7C2BA 100%);--lplata:linear-gradient(90deg,#FFFFFF 0%,#D5D8DC 25%,#9EA2A8 60%,#3F4247 100%)}
+html{background:#F6F6F7}
+body{padding:0 0 70px;font-size:15px}
+body::after{display:none}
+/* fondo blanco con grano fino y textura nebulosa suave, en una capa fija */
+body::before{content:"";position:fixed;inset:0;left:0;width:auto;z-index:-1;pointer-events:none;transform:translateZ(0);background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/180px,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='1200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0032' numOctaves='5' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25  0 0 0 0 .26  0 0 0 0 .28  0 0 0 .16 -.035'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E") 0 0/1200px,
+  radial-gradient(55% 45% at 8% 6%,rgba(255,255,255,1),rgba(255,255,255,0) 70%),
+  radial-gradient(50% 60% at 96% 92%,rgba(199,194,186,.30),rgba(199,194,186,0) 70%),
+  radial-gradient(40% 40% at 70% 18%,rgba(191,195,200,.22),rgba(191,195,200,0) 70%),
+  linear-gradient(180deg,#FBFBFB 0%,#F4F4F5 100%)}
+/* ---------- encabezado: vidrio con el título y los pasos ---------- */
+.headw{position:relative;z-index:40;max-width:1220px;margin:18px auto 0;padding:0 36px}
+.hglass{position:relative;isolation:isolate;padding:var(--pg);display:flex;flex-direction:column;gap:var(--pg);margin:0 calc(-1 * var(--pg))}
+.hglass::before,.hglass::after{content:"";position:absolute;inset:0;border-radius:var(--rg);pointer-events:none;z-index:-1}
+.hglass::before{background:radial-gradient(60% 160% at var(--gx,12%) 0%,rgba(255,255,255,.85),rgba(255,255,255,0) 60%),linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.36) 55%,rgba(255,255,255,.5));-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -16px 26px -12px rgba(255,255,255,.65),0 10px 28px -10px rgba(17,17,17,.18),0 1px 3px rgba(17,17,17,.08)}
+.hglass::after{padding:1.5px;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.15) 26%,rgba(158,162,168,.7) 50%,rgba(255,255,255,.12) 74%,rgba(255,255,255,.95));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.hband{position:relative;overflow:hidden;padding:18px 26px 20px;border-radius:var(--r);color:#fff;background:var(--grafito) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.hband::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--lcel)}
+.hband .eyebrow{display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.2em;color:#fff;margin-bottom:4px}
+.hband .eyebrow::before{content:"";width:26px;height:3px;border-radius:3px;background:linear-gradient(90deg,#6493B5,#C7C2BA)}
+.hband .title{font-size:37px;font-weight:700;line-height:1.05;letter-spacing:-.04em;color:#fff;margin:0}
+.hband .title b{background:linear-gradient(100deg,#FFF 0%,#FFF 42%,#C9CDD2 48%,#FFF 50%,#C9CDD2 52%,#FFF 58%,#FFF 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 10s ease-in-out infinite}
+/* pasos */
+.steps{display:flex;filter:drop-shadow(0 0 .7px rgba(17,17,17,.55)) drop-shadow(0 2px 3px rgba(17,17,17,.10))}
+.steps .cv{flex:1;min-height:58px;margin-left:-14px;padding:8px 36px 10px 40px;grid-template-columns:auto auto 1fr;column-gap:10px;overflow:hidden;box-shadow:none;
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%,22px 50%);background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(242,243,245,.86));transition:flex .45s cubic-bezier(.2,.7,.2,1)}
+.steps .cv:first-child{margin-left:0;padding-left:16px;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%)}
+.steps .cv::before,.steps .cv::after{display:none}
+.steps .cv .ic{grid-row:auto;width:32px;height:32px;border-radius:10px 2px 10px 2px;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.steps .cv .ic svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.steps .cv .n{font-family:var(--head);font-weight:800;font-size:30px;line-height:.9;letter-spacing:-.04em;background:linear-gradient(180deg,#111 0%,#3F4247 55%,#9EA2A8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.steps .cv .tx{display:flex;flex-direction:column;min-width:0}
+.steps .cv .no{font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--plomo);line-height:1.3}
+.steps .cv .nm{font-family:var(--head);font-weight:700;font-size:15px;line-height:1.15}
+.steps .cv .ds{grid-column:auto;font-size:11.5px;max-height:0;opacity:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:max-height .3s,opacity .3s}
+.steps .cv .bl{position:absolute;left:0;right:18px;bottom:0;height:4px;background:var(--lcel);opacity:0;transition:opacity .3s}
+.steps .cv.on{flex:1.6;color:#fff;background:var(--grafito)}
+.steps .cv.on .ic{background:#fff;box-shadow:none}.steps .cv.on .ic svg{stroke:#111}
+.steps .cv.on .n{background:linear-gradient(180deg,#FFFFFF 0%,#E6E8EB 45%,#9EA2A8 100%);-webkit-background-clip:text;background-clip:text}
+.steps .cv.on .no{color:#C9CDD2}.steps .cv.on .ds{max-height:18px;opacity:1;color:#D3D6D9}.steps .cv.on .bl{opacity:1}
+.steps .cv.done .no::after{content:" · listo";letter-spacing:.06em;color:inherit}
+.steps .cv[disabled] .tx,.steps .cv[disabled] .n{opacity:.5}
+/* al bajar: barra fija solo con los pasos */
+.miniw{position:fixed;top:10px;left:0;right:0;z-index:45;max-width:1220px;margin:0 auto;padding:0 36px;opacity:0;transform:translateY(-12px);pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+.miniw.show{opacity:1;transform:none;pointer-events:auto}
+.hmini::before,.hmini::after{border-radius:18px 8px 18px 8px}
+/* ---------- cuerpo: tarjeta blanca | línea celeste | notas ---------- */
+.lay{max-width:1220px;margin:var(--sep) auto 0;padding:0 calc(36px - var(--pg));display:grid;grid-template-columns:minmax(0,1fr) 3px 282px;column-gap:26px;row-gap:0;align-items:start}
+.vline{grid-column:2;grid-row:1;align-self:stretch;border-radius:3px;background:linear-gradient(180deg,#6493B5 0%,#6493B5 30%,#C7C2BA 100%)}
+.fin{grid-column:1;grid-row:2;height:0}
+/* tarjeta blanca única (sin desenfoque: casi opaca, se ve igual y no pesa al bajar) */
+.big{grid-column:1;grid-row:1;position:relative;isolation:isolate;padding:var(--pg);border-radius:var(--rg);min-width:0}
+.big::before,.big::after{content:"";position:absolute;inset:0;border-radius:var(--rg);pointer-events:none;z-index:-1}
+.big::before{background:radial-gradient(60% 30% at 12% 0%,rgba(255,255,255,1),rgba(255,255,255,0) 60%),linear-gradient(180deg,rgba(255,255,255,.93),rgba(255,255,255,.86) 55%,rgba(255,255,255,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 28px -10px rgba(17,17,17,.18),0 1px 3px rgba(17,17,17,.08)}
+.big::after{padding:1.5px;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.15) 26%,rgba(158,162,168,.7) 50%,rgba(255,255,255,.12) 74%,rgba(255,255,255,.95));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+/* franja negra de cada paso (clic: abre ese paso y cierra los demás) */
+.cband{position:relative;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 22px;color:#fff;overflow:hidden;cursor:pointer;border-radius:var(--r);border:1.3px solid transparent;background:var(--grafito) padding-box,var(--bordeplata) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
+.cband::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--lplata);z-index:2}
+.cband::after{content:"";position:absolute;top:16px;left:-20%;width:120px;height:1px;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.7));box-shadow:0 0 5px rgba(255,255,255,.6);opacity:0;animation:fugazb 20s linear infinite}
+#s2 .cband::after{animation-delay:7s}#s3 .cband::after{animation-delay:12s}#s4 .cband::after{animation-delay:16s}
+@keyframes fugazb{0%,92%{left:-20%;opacity:0}93%{opacity:.6}100%{left:110%;opacity:0}}
+.cband>*{position:relative;z-index:1}
+.cband h2{font-size:18px;font-weight:600;color:#fff}
+.cband h2 span{font-weight:800;margin-right:10px;background:linear-gradient(180deg,#FFFFFF,#9EA2A8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.r2{display:flex;align-items:center;gap:10px}
+.tg{width:26px;height:26px;flex:none;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 14l5-5 5 5' fill='none' stroke='%23111' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .3s}
+.sec2.closed .tg{transform:rotate(180deg)}
+.chip2{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;color:#111;padding:3px 12px;border-radius:99px;white-space:nowrap;background:linear-gradient(180deg,#FFFFFF,#DADDE1);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.cwrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows .32s cubic-bezier(.2,.8,.2,1)}
+.cwrap>.cbody{min-height:0;overflow:hidden;margin:0 -16px;padding:18px 16px 4px;display:flex;flex-direction:column;gap:14px;transition:padding .32s cubic-bezier(.2,.8,.2,1)}
+.sec2.closed .cwrap{grid-template-rows:0fr}
+.sec2.closed .cwrap>.cbody{padding-top:0;padding-bottom:0}
+.sepx{position:relative;height:3px;margin:22px 40px;clip-path:polygon(0 46%,50% 0,100% 46%,100% 54%,50% 100%,0 54%);background:linear-gradient(90deg,rgba(158,162,168,0) 0%,rgba(158,162,168,.45) 20%,#6E7278 44%,#3F4247 50%,#6E7278 56%,rgba(158,162,168,.45) 80%,rgba(158,162,168,0) 100%)}
+.sepx::after{content:"";position:absolute;top:0;bottom:0;width:8%;left:-10%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85) 70%,rgba(100,147,181,.7))}
+.sepx.go::after{animation:destello 2.4s ease-in-out 1}
+@keyframes destello{0%{left:-10%}100%{left:103%}}
+.sepx:has(+ .sec2[hidden]){display:none}
+/* notas al margen: tarjeta negra translúcida */
+aside.notas{grid-column:3;grid-row:1 / span 2;position:sticky;top:calc(var(--mb,98px) + var(--sep));margin-top:var(--pg);max-height:calc(100vh - var(--mb,98px) - var(--sep) - 16px);overflow:auto;scrollbar-width:none;
+  padding:22px 20px;border-radius:var(--rc);color:#C9CDD2;display:flex;flex-direction:column;gap:16px;isolation:isolate;
+  background:linear-gradient(160deg,rgba(46,48,53,.94),rgba(10,10,11,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 16px 34px -12px rgba(0,0,0,.35)}
+aside.notas::-webkit-scrollbar{display:none}
+aside.notas::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:var(--bordeplata);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:.8}
+aside .kick{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fff;padding-bottom:10px;border-bottom:2px solid;border-image:var(--lplata) 1}
+.mg{display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.5;color:#C9CDD2}
+.mg>b{font-family:var(--head);font-size:13.5px;color:#fff}
+.mg .etapas{gap:12px;margin:4px 0 0}
+.mg .et{grid-template-columns:28px 1fr;gap:10px}
+.mg .et .c{width:28px;height:28px;font-size:12px}
+.mg .et b{font-size:12.5px}.mg .et small{font-size:11.5px}
+.mg .etapas::before{left:13px}.mg .etapas.run::after{left:10px}
+.learn .lbl{display:none}
+.learn h3{font-size:13.5px;color:#fff;margin:0 0 4px}
+.learn ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.learn b{color:#fff}
+.learn .tip{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.14);font-size:12px;color:#AEB2B7}
+#cuadre .ok{display:inline-flex;align-items:center;gap:5px;color:#fff;font-weight:600}
+#cuadre .ok::before{content:"✓";display:grid;place-items:center;width:15px;height:15px;border-radius:50%;font-size:9px;color:#111;background:#fff}
+#cuadre .no{color:#FF6B6B;font-weight:600}
+#verdict{color:#E6E8EB}
+/* ---------- paso 1 ---------- */
+.capsula{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;font-size:12.5px;font-weight:600;color:#111;background:linear-gradient(180deg,#FFFFFF,#DADDE1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 1px 2px rgba(0,0,0,.3)}
+.capsula svg{width:14px;height:14px;stroke:#111;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
+.capsula[aria-expanded="true"] .cv2{transform:rotate(180deg)}
+.critp{display:grid;grid-template-rows:0fr;margin:-14px -16px 0;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.critp>div{overflow:hidden;min-height:0}
+.critp.open{grid-template-rows:1fr}
+.critp .pan{margin:0 0 6px;border-radius:16px 3px 16px 3px;color:#fff;padding:16px 20px 18px;background:linear-gradient(160deg,rgba(46,48,53,.96),rgba(10,10,11,.98)) padding-box,var(--bordeplata) border-box;border:1.5px solid transparent}
+.critp .ph{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;margin-bottom:6px;border-bottom:2px solid;border-image:var(--lplata) 1}
+.critp .ph h3{color:#fff;font-size:15px}.critp .ph span{font-size:12px;color:#AEB2B7}
+.critp table{font-size:13px}.critp td{padding:7px 10px;border-top:1px solid rgba(255,255,255,.10);color:#D3D6D9;background:transparent}
+.critp td:first-child{font-family:var(--head);font-weight:700;color:#fff;width:36px;text-align:center}
+.critp td.n{color:#fff;font-weight:600;width:220px}
+.critp tbody tr:hover{background:transparent}
+.drops{gap:16px}
+.drops .drop{position:relative;isolation:isolate;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;gap:3px;padding:14px 14px 12px;border-radius:var(--rs);border:2px solid transparent;
+  background:linear-gradient(160deg,rgba(255,255,255,.98),rgba(246,247,248,.90)) padding-box,var(--metal4) border-box;box-shadow:inset 0 1.5px 0 #fff,0 8px 18px -10px rgba(17,17,17,.25);transition:transform .2s,box-shadow .2s}
+.drops .drop:hover{transform:translateY(-3px);box-shadow:inset 0 1.5px 0 #fff,0 14px 24px -12px rgba(17,17,17,.32)}
+.drops .drop::after{content:"";position:absolute;top:-30%;bottom:-30%;width:40%;left:-70%;z-index:-1;pointer-events:none;transform:skewX(-18deg);background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.5) 50%,rgba(255,255,255,0));transition:left .8s ease}
+.drops .drop:hover::after{left:140%}
+.drops .drop::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--lcel);opacity:0;transition:opacity .3s}
+.drops .drop:has(.st.ok)::before{opacity:1}
+.dtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.drops .fi{width:40px;height:40px;border-radius:11px 2px 11px 2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1.5px #BFC3C8}
+.drops .fi svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dn{font-family:var(--head);font-weight:800;font-size:34px;line-height:.8;letter-spacing:-.05em;background:linear-gradient(180deg,#3F4247 0%,#9EA2A8 60%,#E6E8EB 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.drops .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drops .drop .nm{font-family:var(--head);font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drops .drop .mt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dfoot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:8px;border-top:1px solid #E3E5E8;gap:8px}
+.dfoot .st{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dfoot .st i{width:9px;height:9px;background:var(--cel);animation:pc 1.6s ease-out infinite}
+.dfoot .st.ok{color:var(--ink)}.dfoot .st.ok i{background:#111;animation:pn 1.8s ease-out infinite}
+.dfoot .st.err i{background:var(--neg);animation:none}
+@keyframes pc{0%{box-shadow:0 0 0 0 rgba(100,147,181,.75)}80%{box-shadow:0 0 0 7px rgba(100,147,181,0)}100%{box-shadow:0 0 0 0 rgba(100,147,181,0)}}
+@keyframes pn{0%{box-shadow:0 0 0 0 rgba(17,17,17,.55)}80%{box-shadow:0 0 0 7px rgba(17,17,17,0)}100%{box-shadow:0 0 0 0 rgba(17,17,17,0)}}
+.pill{flex:none;font-size:11.5px;font-weight:600;padding:4px 12px;border-radius:99px;color:#fff;background:var(--grafito);box-shadow:inset 0 -2px 0 var(--cel)}
+.drops .drop:has(.st.ok) .pill{color:#2E3035;background:linear-gradient(180deg,#F8F9FA,#DDE0E4 45%,#F1F2F4 70%,#E6E8EB);box-shadow:inset 0 0 0 1.5px #B4B9C0}
+.drops .drop:has(.st.ok) .pill::after{content:""}
+.fill{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(90deg,#E6E8EB 0%,#BFC3C8 30%,#9FB6CA 65%,#6493B5 100%)}
+.track{height:7px}
+/* ---------- desplegables (toda tabla parte cerrada) ---------- */
+.tgl{all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:grid;grid-template-columns:auto 1fr 22px;gap:12px;align-items:center;padding:10px 12px 10px 16px;border-radius:12px 3px 12px 3px;border:1px solid #DADDE1;background:#fff;transition:background .2s}
+.tgl:hover{background:#F7F8F9}
+.tgl span{font-family:var(--head);font-weight:600;font-size:14px}
+.tgl em{font-style:normal;font-size:12.5px;color:var(--plomo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tgl i{width:22px;height:22px;border-radius:50%;background:var(--pos) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .3s}
+.tgl[aria-expanded="true"] i{transform:rotate(180deg)}
+.xp{display:grid;grid-template-rows:0fr;margin-top:-14px;transition:grid-template-rows .32s cubic-bezier(.2,.8,.2,1)}
+.xp>div{overflow:hidden;min-height:0}
+.xp.open{grid-template-rows:1fr}
+.xpin{padding-top:12px}
+.xph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.xph h3{font-size:16px;font-weight:700}.xph .note{flex:1}
+.note{font-size:12px;color:#6E7278}
+.btn2{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;font-size:12.5px;font-weight:600;color:#2E3035;background:linear-gradient(180deg,#F8F9FA,#DDE0E4 45%,#F1F2F4 70%,#E6E8EB);box-shadow:inset 0 0 0 1.5px #B4B9C0;white-space:nowrap}
+/* ---------- tablas: borde sutil, eje gris claro en cursiva, barra deslizadora afuera ---------- */
+.tw{min-width:0}
+.scroll{overflow:auto;padding-right:12px}
+.scroll::-webkit-scrollbar{width:7px;height:7px}
+.scroll::-webkit-scrollbar-track{background:transparent;margin-top:36px;margin-bottom:4px}
+.scroll::-webkit-scrollbar-thumb{border-radius:99px;background:linear-gradient(180deg,#45474D,#040405)}
+.scroll::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#6493B5,#2E3035)}
+.tw .tblwrap{max-height:560px;background:transparent;box-shadow:none;border-radius:0}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;background:#fff;border:1px solid #DADDE1;border-radius:14px 3px 14px 3px}
+table.t th{position:sticky;top:0;z-index:2;background:var(--grafito);color:#fff;font-weight:600;font-size:12px;padding:8px 12px;text-align:center;white-space:nowrap}
+table.t thead th:first-child{border-top-left-radius:13px}table.t thead th:last-child{border-top-right-radius:2px}
+table.t td{padding:6px 12px;border-top:1px solid #EEF0F2;vertical-align:top}
+table.t tbody tr>td:first-child{background:#F3F4F5;font-style:italic}
+table.t tbody tr:hover>td{background:rgba(17,17,17,.025)}table.t tbody tr:hover>td:first-child{background:#ECEDEF}
+table.t td.empty{background:#fff!important;font-style:normal;text-align:center}
+table.t .sel.sm{font-style:normal}
+/* ---------- paso 2 ---------- */
+.frow{display:flex;align-items:flex-end;gap:12px}
+.fsel{display:flex;flex-direction:column;gap:4px;min-width:200px}
+.fsel.grow{flex:1;min-width:0}
+.fsel small{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--plomo);padding-left:14px}
+.fsel .dd{font-size:14px;padding:9px 46px 9px 16px;border-radius:99px;border:1.5px solid #CDD1D6;max-width:none}
+.fmeta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:-6px}
+.fmeta .count{box-shadow:inset 0 0 0 1px #DADDE1}
+.iw{position:relative;flex:none}
+.ib{all:unset;cursor:pointer;position:relative;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:17px;color:#9EA2A8;background:linear-gradient(180deg,#FFFFFF,#E6E8EB);box-shadow:inset 0 0 0 1.5px #DADDE1}
+.ib em{display:none}
+.ib.on{color:#fff;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 3px rgba(100,147,181,.28);animation:haloi 2.6s ease-in-out infinite}
+@keyframes haloi{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 3px rgba(100,147,181,.20)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 6px rgba(100,147,181,.10)}}
+.ib.on em{display:grid;place-items:center;position:absolute;right:-4px;top:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;font-style:normal;font-size:10.5px;color:#fff;background:var(--neg);box-shadow:0 0 0 2px #fff}
+.ipop{position:absolute;right:0;top:calc(100% + 8px);z-index:30;width:420px;padding:14px 16px;border-radius:16px 4px 16px 4px;font-size:13px;color:var(--plomo);line-height:1.5;background:#fff;box-shadow:0 14px 30px rgba(17,17,17,.18),inset 0 0 0 1px #DADDE1}
+.ipt{display:block;font-family:var(--head);color:var(--ink);margin-bottom:8px}
+.ipop .aviso{display:flex;flex-direction:column;gap:8px;padding:0;border:0;background:none}
+.ipop .aviso .ic{display:none}
+.ipop .aviso .btn{align-self:flex-start;padding:8px 16px;font-size:12.5px}
+.ipop:has(.aviso:not([hidden])) #ipok{display:none}
+.dcard{position:relative;padding:12px 16px 8px;border-radius:var(--rs);border:2px solid transparent;background:linear-gradient(160deg,#FFFFFF,#F9FAFA) padding-box,var(--metal4) border-box;box-shadow:inset 0 1.5px 0 #fff,0 8px 18px -12px rgba(17,17,17,.22)}
+.dcard:empty{display:none}
+.dct{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);padding-bottom:9px;margin-bottom:2px;border-bottom:2px solid;border-image:linear-gradient(90deg,#3F4247,#9EA2A8 40%,rgba(213,216,220,0)) 1}
+.rw{all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto 22px;gap:12px;align-items:center;padding:9px 6px 9px 10px;border-top:1px solid #EEF0F2;font-size:14px;color:var(--ink);position:relative;transition:background .15s}
+.rw:first-of-type{border-top:0}
+.rw:hover{background:#F7F8F9}
+.rw small{font-size:12.5px;color:var(--plomo)}
+.rw b{font-family:var(--head);font-weight:700;font-size:16px}
+.rw b.pz{color:var(--pos)}.rw b.ng{color:var(--neg)}
+.rw i{width:22px;height:22px;border-radius:50%;background:var(--pos) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .3s}
+.rw.on{background:#F3F4F5}
+.rw.on::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px;background:linear-gradient(180deg,#6493B5,#C7C2BA)}
+.rw.on i{transform:rotate(180deg)}
+#mapbox .maptbl{margin-top:0}
+/* ---------- paso 3 y 4 ---------- */
+.tools{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.tools .sel{border-radius:99px;padding:8px 34px 8px 14px}
+.exp{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.exp p{font-size:14px;color:var(--plomo)}
+.outs .out{padding:12px 16px}
+.outs .out .v{font-size:24px}
+.foot{max-width:1148px;margin:40px auto 0;text-align:center;border-top:0}
+/* tarjetas de asignaturas: nombre completo en hasta 2 líneas y todas del mismo tamaño */
+#asigs .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;align-items:stretch}
+/* desplegables en negro metálico (todos iguales) */
+.tgl{color:#fff;border:1.3px solid transparent;background:var(--grafito) padding-box,var(--bordeplata) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 2px rgba(0,0,0,.2);position:relative;overflow:hidden}
+.tgl:hover{background:var(--grafito) padding-box,var(--bordeplata) border-box;filter:brightness(1.12)}
+.tgl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--lplata)}
+.tgl span{color:#fff}
+.tgl em{color:#C9CDD2}
+.tgl i{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5' fill='none' stroke='%231B2A4A' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+#asigs .it{height:100%;min-height:58px;align-content:center}
+#asigs .it .nm{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.3;font-size:12.5px;overflow-wrap:anywhere}
+@media (max-width:980px){.lay{grid-template-columns:1fr}.vline,aside.notas{display:none}.steps{flex-direction:column;filter:none}.steps .cv,.steps .cv:first-child{clip-path:none;margin:0 0 6px;border-radius:var(--rs)}.frow{flex-wrap:wrap}.drops{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <span class="eyebrow">Bibliotecas · Bibliografía obligatoria</span>
-    <h1 class="title">Comprobador de <b>Syllabus</b></h1>
-    <p class="sub">Compara los syllabus que llegan con el consolidado y con las existencias. Entrega los 3 casos: qué se agrega, qué se deja igual y qué sale, más la bibliografía básica que falta comprar.</p>
-  </header>
-
-  <nav class="chev" role="tablist" aria-label="Pasos">
-    <button class="cv jp" role="tab" id="j1" aria-selected="true" data-p="p1" data-t="Cargar archivos"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg></span><span><span class="no">PASO 01</span><br><span class="nm">Cargar</span></span><span class="ds">Syllabus, consolidado y existencias</span></button>
-    <button class="cv jp" role="tab" id="j2" aria-selected="false" data-p="p2" data-t="Semáforo por asignatura" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="18" r="2.5"/></svg></span><span><span class="no">PASO 02</span><br><span class="nm">Semáforo</span></span><span class="ds">Qué asignatura cambió y cuánto cubrimos</span></button>
-    <button class="cv jp" role="tab" id="j3" aria-selected="false" data-p="p3" data-t="Revisar títulos" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span><span><span class="no">PASO 03</span><br><span class="nm">Revisar</span></span><span class="ds">Título por título, dudosos primero</span></button>
-    <button class="cv jp" role="tab" id="j4" aria-selected="false" data-p="p4" data-t="Exportar" disabled><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span><span><span class="no">PASO 04</span><br><span class="nm">Exportar</span></span><span class="ds">Excel con Guía, Cruce y Tablas</span></button>
+<!-- ===== encabezado: vidrio con el título y los pasos (no se achica al bajar) ===== -->
+<div class="headw" id="head"><div class="hglass">
+  <header class="hband"><span class="eyebrow">Bibliotecas UAI · Bibliografía obligatoria</span><h1 class="title"><b>Syllabus</b> Match</h1></header>
+  <nav class="steps" id="steps" aria-label="Pasos">
+    <button class="cv jp on" id="j1" data-p="p1" data-go="s1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg></span><span class="n">1</span><span class="tx"><span class="no">Paso</span><span class="nm">Cargar</span><span class="ds">Syllabus, consolidado y existencias</span></span><span class="bl"></span></button>
+    <button class="cv jp" id="j2" data-p="p2" data-go="s2" disabled><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="18" r="2.5"/></svg></span><span class="n">2</span><span class="tx"><span class="no">Paso</span><span class="nm">Resultado</span><span class="ds">Programa, cifras y asignaturas</span></span><span class="bl"></span></button>
+    <button class="cv jp" id="j3" data-p="p3" data-go="s3" disabled><span class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span><span class="n">3</span><span class="tx"><span class="no">Paso</span><span class="nm">Revisar</span><span class="ds">Título por título, dudosos primero</span></span><span class="bl"></span></button>
+    <button class="cv jp" id="j4" data-p="p4" data-go="s4" disabled><span class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span><span class="n">4</span><span class="tx"><span class="no">Paso</span><span class="nm">Exportar</span><span class="ds">Excel con Guía, Cruce y Tablas</span></span><span class="bl"></span></button>
   </nav>
+</div></div>
+<!-- al bajar: el título se va y quedan fijos solo los pasos -->
+<div class="miniw" id="mini"><div class="hglass hmini"><nav class="steps" id="steps2" aria-hidden="true"></nav></div></div>
 
-  <section class="stage glass">
-    <div class="work">
-      <div class="tline"><h2 id="ptit">Cargar archivos</h2><button class="info" id="infoBtn" aria-expanded="false" aria-label="Cómo leerlo">i</button></div>
-      <div class="pop" id="pop" hidden><button class="x" id="popX" aria-label="Cerrar">✕</button><div id="learn"></div></div>
-      <!-- 1 -->
-      <div class="pane" id="p1" role="tabpanel" aria-labelledby="j1">
-        <p class="desc">Haz clic en cada tarjeta o arrastra los archivos encima. Las existencias son opcionales, pero sin ellas no se sabe qué hay que comprar.</p>
+<div class="lay">
+  <main class="big">
+    <!-- ===== 1 · Cargar ===== -->
+    <section class="sec2" id="s1">
+      <div class="cband"><h2><span>1</span>Cargar archivos</h2><div class="r2"><button class="capsula" id="critBtn" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 8h7M8 12h7"/></svg>Criterios de selección<svg class="cv2" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg></button></div></div>
+      <div class="cwrap"><div class="cbody" id="p1">
+        <div class="critp" id="critp"><div><div class="pan">
+          <div class="ph"><h3>Criterios de selección y compra</h3><span>Reglas aprobadas del cruce</span></div>
+          <table>
+            <tr><td>1</td><td class="n">¿Es el mismo título?</td><td>Parecido 85 o más: ya estaba · 70 a 84: revisar a mano · menos de 70: nuevo</td></tr>
+            <tr><td>2</td><td class="n">Los 3 casos</td><td>1. Nuevo: se agrega · 2. Ya estaba: se deja igual (también su tipo) · 3. Ya no está: en rojo, pasa a «Títulos Sacados de Syllabus». No se borra</td></tr>
+            <tr><td>3</td><td class="n">¿Sale del consolidado?</td><td>Solo si el título ya no está en el syllabus nuevo de esa misma asignatura, o si la asignatura ya no se dicta</td></tr>
+            <tr><td>4</td><td class="n">No llegó el syllabus</td><td>No se hace nada</td></tr>
+            <tr><td>5</td><td class="n">Edición</td><td>Cuenta la misma edición o una superior a la que pide el syllabus, para el 1 y para la compra</td></tr>
+            <tr><td>6</td><td class="n">Existencias</td><td>1 si hay ejemplares en cualquier biblioteca o si lo tenemos en digital. El HRID va en «Observación»</td></tr>
+            <tr><td>7</td><td class="n">Links</td><td>Si la cita trae un link, queda en «Observación» con vínculo</td></tr>
+            <tr><td>8</td><td class="n">Compra</td><td>Solo bibliografía básica, libro o e-book, que no tengamos. La complementaria no se compra</td></tr>
+            <tr><td>9</td><td class="n">Leyes, sentencias, web</td><td>Acceso libre por confirmar. Los artículos cuentan para la cobertura</td></tr>
+            <tr><td>10</td><td class="n">Mismo libro en 2 asignaturas o programas</td><td>Una fila por asignatura, una sola compra. Se marca con «También lo pide»</td></tr>
+          </table></div></div></div>
         <div class="drops">
-          <label class="drop glass s" id="dSyl"><input type="file" id="fSyl" multiple accept=".zip,.pdf,.docx">
-            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>
-            <span class="lbl">1 · Syllabus que llegaron</span><span class="nm" id="nSyl">Zip, PDF o Word</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="st" id="sSyl"><i></i>Pendiente</span></label>
-          <label class="drop glass s" id="dCon"><input type="file" id="fCon" accept=".xlsx,.xlsm,.xls">
-            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span>
-            <span class="lbl">2 · Lo ya revisado</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="st" id="sCon"><i></i>Pendiente</span></label>
-          <label class="drop glass s" id="dCat"><input type="file" id="fCat" multiple accept=".csv,.xlsx,.xls,.txt">
-            <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#BFC3C8" stroke-width="1.7"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.5 1-4 15-3.5-1z"/></svg></span>
-            <span class="lbl">3 · Existencias</span><span class="nm" id="nCat">Hoja Existencia y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="st" id="sCat"><i></i>Opcional</span></label>
+          <label class="drop" id="dSyl"><input type="file" id="fSyl" multiple accept=".zip,.pdf,.docx"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="dn">1</span></span>
+            <span class="lbl">Syllabus que llegaron</span><span class="nm" id="nSyl">Zip, PDF o Word</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sSyl"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
+          <label class="drop" id="dCon"><input type="file" id="fCon" accept=".xlsx,.xlsm,.xls"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span><span class="dn">2</span></span>
+            <span class="lbl">Lo ya revisado</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="dfoot"><span class="st" id="sCon"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
+          <label class="drop" id="dCat"><input type="file" id="fCat" multiple accept=".csv,.xlsx,.xls,.txt"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.5 1-4 15-3.5-1z"/></svg></span><span class="dn">3</span></span>
+            <span class="lbl">Existencias</span><span class="nm" id="nCat">Hoja Existencia y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sCat"><i></i>Opcional</span><span class="pill">Elegir</span></span></label>
         </div>
-        <div class="runrow"><button class="btn" id="go" disabled>Comparar ahora</button><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div></div>
+        <div class="runrow run"><button class="btn" id="go" disabled>Comparar</button><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div></div>
         <div class="log" id="log" aria-live="polite">Carga los syllabus y el consolidado para empezar.</div>
-      </div>
-      <!-- 2 -->
-      <div class="pane" id="p2" role="tabpanel" aria-labelledby="j2" hidden>
-        <p class="desc">Bibliografía básica de los syllabus nuevos frente al consolidado y a las existencias.</p>
-        <details class="map glass s" id="mapbox"><summary>Correspondencia de asignaturas (revísala si algo no calza)</summary><div class="maptbl" id="maptbl"></div></details>
+        <button class="tgl" data-t="tAsigs" aria-expanded="false"><span id="aTit">Asignaturas</span><em id="aCount">Sin archivos</em><i></i></button>
+        <div class="xp" id="tAsigs"><div><div class="xpin"><div id="asigs"><p class="vacio">Aquí aparecen las asignaturas del programa elegido y, al comparar, los syllabus que se van leyendo.</p></div></div></div></div>
+      </div></div>
+    </section>
+    <div class="sepx"></div>
+    <!-- ===== 2 · Resultado ===== -->
+    <section class="sec2" id="s2" hidden>
+      <div class="cband"><h2><span>2</span>Resultado</h2><div class="r2"></div></div>
+      <div class="cwrap"><div class="cbody" id="p2">
+        <!-- filtro de unidad y programa (listas desplegables) y aviso en el botón «i» -->
+        <div class="frow">
+          <label class="fsel"><small>Unidad</small><select class="dd" id="uSel" aria-label="Unidad académica" disabled><option>Carga el consolidado</option></select></label>
+          <label class="fsel grow"><small>Programa</small><select class="dd" id="prog" aria-label="Programa" disabled><option>Carga el consolidado</option></select></label>
+          <div class="iw"><button class="ib" id="ib" aria-label="Avisos" aria-expanded="false">i<em id="ibn"></em></button>
+            <div class="ipop" id="ipop" hidden><b class="ipt">Antes de seguir</b><div class="aviso" id="aviso" role="alert" hidden></div><p id="ipok">Todos los syllabus calzan con el programa. Sin avisos.</p></div></div>
+        </div>
+        <div class="fmeta"><span class="count" id="uCount">Sin archivo</span><span class="det" id="uDet" hidden></span><span class="count" id="pCount">Sin archivo</span><span class="det" id="pDet" hidden></span><a href="#" class="link" id="verU" hidden></a><a href="#" class="link" id="verP" hidden></a></div>
+        <div hidden><div class="mini" id="uMini"></div><div class="mini" id="pMini"></div><section id="resumen"><div class="exec" id="kpis"></div></section></div>
+        <div class="dcard" id="dcard"></div>
+        <div class="xp" id="xp"><div><div class="xpin">
+          <div class="xph"><h3 id="xpt"></h3><span class="note" id="xpn"></span><button class="btn2" id="xpv">Ver en Revisar</button><button class="btn2" id="xpc">Cerrar</button></div>
+          <div class="tw"><div class="scroll" style="max-height:360px"><table class="t"><thead id="xph"></thead><tbody id="xpb"></tbody></table></div></div>
+        </div></div></div>
+        <button class="tgl" data-t="tSem" aria-expanded="false"><span>Asignaturas y cobertura básica</span><em id="semMeta">Barra por asignatura: negro disponible · plata por verificar · rojo sin recurso</em><i></i></button>
+        <div class="xp" id="tSem"><div><div class="xpin">
         <div class="semi">
           <div class="ring">
             <svg viewBox="0 0 200 200" role="img" id="ringsvg" aria-label="Cobertura de la bibliografía básica">
@@ -303,75 +602,54 @@ td.c{text-align:center;white-space:nowrap}
           </div>
           <div class="rows" id="rows"></div>
         </div>
-      </div>
-      <!-- 3 -->
-      <div class="pane" id="p3" role="tabpanel" aria-labelledby="j3" hidden>
-        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><p class="desc">Cambia el tipo o la decisión con los menús. Todo se recalcula al momento.</p>
-          <select class="sel sm" id="fAsig" aria-label="Filtrar por asignatura"><option value="">Todas las asignaturas</option></select></div>
-        <div class="chips" role="group" aria-label="Filtro" id="chips"></div>
-        <div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
-      </div>
-      <!-- 4 -->
-      <div class="pane" id="p4" role="tabpanel" aria-labelledby="j4" hidden>
-        <p class="desc">Un Excel con la Guía, el Cruce (formato del consolidado), las Tablas y el respaldo de lo leído.</p>
+        </div></div></div>
+        <button class="tgl" data-t="mapbox" aria-expanded="false"><span>Correspondencia de asignaturas</span><em>Revísala si algo no calza · aquí se corrige el programa o la asignatura de cada syllabus</em><i></i></button>
+        <div class="xp" id="mapbox"><div><div class="xpin"><div class="maptbl" id="maptbl"></div></div></div></div>
+      </div></div>
+    </section>
+    <div class="sepx"></div>
+    <!-- ===== 3 · Revisar ===== -->
+    <section class="sec2" id="s3" hidden>
+      <div class="cband"><h2><span>3</span>Revisar títulos</h2><div class="r2"></div></div>
+      <div class="cwrap"><div class="cbody" id="p3">
+        <div class="tools"><select class="sel" id="fAsig" aria-label="Filtrar por asignatura"><option value="">Todas las asignaturas</option></select>
+          <div class="chips" role="group" aria-label="Filtro" id="chips"></div></div>
+        <button class="tgl" data-t="tRev" aria-expanded="false"><span>Títulos</span><em>Se abre al elegir una vista o una asignatura · cambia el tipo o la decisión con los menús</em><i></i></button>
+        <div class="xp" id="tRev"><div><div class="xpin"><div class="tw"><div class="scroll tblwrap"><table class="t"><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></div></div></div></div>
+      </div></div>
+    </section>
+    <div class="sepx"></div>
+    <!-- ===== 4 · Exportar ===== -->
+    <section class="sec2" id="s4" hidden>
+      <div class="cband"><h2><span>4</span>Exportar</h2><div class="r2"><span class="chip2">Excel · 6 hojas</span></div></div>
+      <div class="cwrap"><div class="cbody" id="p4">
+        <div class="exp"><p>Un Excel con la Guía, el Cruce (formato del consolidado), las Tablas y el respaldo de lo leído. Lo que sale va en rojo a «Títulos Sacados de Syllabus».</p><button class="btn" id="dl">Descargar Excel</button></div>
         <div class="outs" id="outs"></div>
-        <div class="runrow"><button class="btn" id="dl">Descargar Excel</button></div>
         <div class="toast" id="toast" aria-live="polite"></div>
-      </div>
-    </div>
-    <aside class="rail">
-      <div class="tline w"><h2 style="color:#fff">Etapas del cruce</h2></div>
-      <p class="desc" style="color:#AEB2B7">Avance de la comparación, paso a paso.</p>
+      </div></div>
+    </section>
+  </main>
+
+  <span class="vline"></span>
+  <div class="fin" id="fin"></div>
+
+  <!-- ===== notas al margen (tarjeta negra) ===== -->
+  <aside class="notas">
+    <span class="kick">Notas al margen</span>
+    <div class="mg"><b>Etapas del cruce</b>
       <ol class="etapas" id="etapas">
         <li class="et"><span class="c">1</span><span><b>Leer syllabus</b><small id="e1">Esperando archivos</small></span></li>
         <li class="et"><span class="c">2</span><span><b>Cruzar con el consolidado</b><small id="e2">Título por título</small></span></li>
         <li class="et"><span class="c">3</span><span><b>Buscar en existencias</b><small id="e3">FOLIO y Alma</small></span></li>
         <li class="et"><span class="c">4</span><span><b>Preparar el Excel</b><small id="e4">Guía, Cruce y Tablas</small></span></li>
-      </ol>
-      <div class="pie">El punto blanco recorre la línea mientras trabaja. La etapa activa tiene un halo.</div>
-    </aside>
-  </section>
-
-  <section class="sel-row">
-    <div class="selc glass"><div class="rowh"><h3>Unidad académica</h3><span class="count" id="uCount">Sin archivo</span></div>
-      <select class="dd" id="uSel" aria-label="Unidad académica" disabled><option>Carga el consolidado</option></select>
-      <div class="mini" id="uMini"><div><b>—</b><span>Programas</span></div><div><b>—</b><span>Asignaturas</span></div><div><b>—</b><span>Títulos</span></div></div></div>
-    <div class="selc glass"><div class="rowh"><h3>Programa</h3><span class="count" id="pCount">Sin archivo</span></div>
-      <select class="dd" id="prog" aria-label="Programa" disabled><option>Carga el consolidado</option></select>
-      <div class="mini" id="pMini"><div><b>—</b><span>Nivel</span></div><div><b>—</b><span>Asignaturas</span></div><div><b>—</b><span>Títulos</span></div></div></div>
-  </section>
-
-  <section class="sec" id="resumen" hidden>
-    <div class="exec" id="kpis"></div>
-    <div class="verdict glass s" id="verdict"></div>
-  </section>
-
-  <section class="asig glass">
-    <div class="head"><h3 id="aTit">Asignaturas</h3><span class="count dark" id="aCount">Sin archivos</span></div>
-    <div id="asigs"><p class="vacio">Aquí aparecen las asignaturas del programa elegido y, al comparar, los syllabus que se van leyendo.</p></div>
-  </section>
-
-  <section class="crit glass">
-    <div class="tline"><h2>Criterios que aplica la herramienta</h2></div>
-    <table>
-      <thead><tr><th>#</th><th>Situación</th><th>Regla</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td class="n">¿Es el mismo título?</td><td>Parecido 85 o más: ya estaba · 70 a 84: revisar a mano · menos de 70: nuevo</td></tr>
-        <tr><td>2</td><td class="n">Los 3 casos</td><td>1. Nuevo: se agrega · 2. Ya estaba: se deja igual (también su tipo) · 3. Ya no está: en rojo, pasa a «Títulos Sacados de Syllabus». No se borra</td></tr>
-        <tr><td>3</td><td class="n">¿Sale del consolidado?</td><td>Solo si el título ya no está en el syllabus nuevo de esa misma asignatura, o si la asignatura ya no se dicta</td></tr>
-        <tr><td>4</td><td class="n">No llegó el syllabus</td><td>No se hace nada</td></tr>
-        <tr><td>5</td><td class="n">Edición</td><td>Cuenta la misma edición o una superior a la que pide el syllabus, para el 1 y para la compra</td></tr>
-        <tr><td>6</td><td class="n">Existencias</td><td>1 si hay ejemplares en cualquier biblioteca o si lo tenemos en digital. El HRID va en «Observación»</td></tr>
-        <tr><td>7</td><td class="n">Links</td><td>Si la cita trae un link, queda en «Observación» con vínculo</td></tr>
-        <tr><td>8</td><td class="n">Compra</td><td>Solo bibliografía básica, libro o e-book, que no tengamos. La complementaria no se compra</td></tr>
-        <tr><td>9</td><td class="n">Leyes, sentencias, web</td><td>Acceso libre por confirmar. Los artículos cuentan para la cobertura</td></tr>
-        <tr><td>10</td><td class="n">Mismo libro en 2 asignaturas</td><td>Una fila por asignatura, una sola compra</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <p class="foot">Herramienta de trabajo desarrollada por el Analista de Servicio de Datos y Gestión de Bibliotecas · Pablo Salas</p>
+      </ol></div>
+    <div class="mg" id="resBox" hidden><b>En una frase</b><span id="verdict"></span></div>
+    <div class="mg" id="cuaBox" hidden><b>Cuadre</b><span id="cuadre"></span></div>
+    <div class="mg learn" id="learn"></div>
+  </aside>
 </div>
+
+<p class="foot">Herramienta de trabajo desarrollada por el Analista de Servicio de Datos y Gestión de Bibliotecas · Pablo Salas</p>
 
 <script>
 "use strict";
@@ -542,7 +820,8 @@ async function readSyllabusFiles(files,onProg){const list=[];let total=0;
   const tick=()=>{if(onProg)onProg(list,total)};
   const handle=async(name,buf)=>{const ext=name.toLowerCase().split(".").pop();let rd;
     try{rd=ext==="pdf"?await pdfRead(buf):await docxRead(buf)}catch(e){list.push({file:name,error:"No se pudo leer el archivo",lines:[],refs:[],links:[]});return}
-    const lines=cleanLines(rd.lines);const sy={file:name,lines,links:rd.links,header:lines.slice(0,15).join(" "),subject:guessSubject(lines,name),version:versionYear(lines),refs:parseRefs(splitByLinks(lines,rd.links))};
+    const parts=name.split("/").filter(Boolean);
+    const lines=cleanLines(rd.lines);const sy={file:name,folder:parts.length>1?parts[parts.length-2]:"",lines,links:rd.links,header:lines.slice(0,15).join(" "),subject:guessSubject(lines,name),version:versionYear(lines),refs:parseRefs(splitByLinks(lines,rd.links))};
     assignLinks(sy);list.push(sy)};
   for(const f of files){const n=f.name.toLowerCase();
     if(n.endsWith(".zip")){const z=f._z||await JSZip.loadAsync(await f.arrayBuffer());
@@ -566,7 +845,8 @@ function readConsolidado(buf){const wb=XLSX.read(buf,{type:"array",dense:true,ce
   const data=[];for(let i=h+1;i<rows.length;i++){const r=rows[i];const g=k=>col[k]>=0?r[col[k]]:"";if(!String(g("titulo")).trim()&&!String(g("asignatura")).trim())continue;
     data.push({fila:i+1,programa:String(g("programa")).trim(),asignatura:String(g("asignatura")).trim(),tipo:String(g("tipo")).trim(),titulo:String(g("titulo")).replace(/\s+/g," ").trim(),
       recursos:+g("recursos")||0,fisico:+g("fisico")||0,electronico:+g("electronico")||0,hrid:g("hrid"),tmat:String(g("tmat")),unidad:String(g("unidad")),version:g("version"),
-      sigla:g("sigla"),semestre:g("semestre"),ciclo:g("ciclo"),grado:g("grado"),raw:r})}
+      sigla:g("sigla"),semestre:g("semestre"),ciclo:g("ciclo"),grado:g("grado"),ocompra:String(g("compra")).trim(),raw:r})}
+  SUBJ_CACHE.clear();
   return{sheet:sh,head,col,data,nivel:/pregrado/i.test(sh)?"Pregrado":"Postgrado"}}
 
 /* ===================== catálogo: Existencia (FOLIO) y Alma ===================== */
@@ -607,24 +887,64 @@ function recTxt(x){const n=x.phys+x.elec;return x.src==="Alma"?`Alma: «${x.titl
   `Existencia: «${x.title.slice(0,80)}» · HRID ${x.id} · ${x.phys?x.phys+" ejemplar(es) en "+[...x.libs].join(", "):"acceso en línea"}`}
 
 /* ===================== cruce ===================== */
-function programSubjects(){return[...new Set(S.con.data.filter(r=>r.programa===S.prog).map(r=>r.asignatura))].sort((a,b)=>a.localeCompare(b,"es"))}
-function mapSubject(sy){const subs=programSubjects();const k=norm(sy.subject);if(EQUIV[k]!==undefined&&(EQUIV[k]===""||subs.includes(EQUIV[k])))return EQUIV[k];
+const SUBJ_CACHE=new Map();
+function programSubjects(p){p=p===undefined?S.prog:p;if(SUBJ_CACHE.has(p))return SUBJ_CACHE.get(p);
+  const L=[...new Set(S.con.data.filter(r=>r.programa===p).map(r=>r.asignatura))].sort((a,b)=>a.localeCompare(b,"es"));SUBJ_CACHE.set(p,L);return L}
+function subjScore(sy,p){const subs=programSubjects(p);const k=norm(sy.subject);if(EQUIV[k]!==undefined&&(EQUIV[k]===""||subs.includes(EQUIV[k])))return{name:EQUIV[k],sc:EQUIV[k]?100:0};
   const kf=norm(sy.file.replace(/^.*\//,""));let best="",bs=0;
   for(const s of subs){const T=toks(s);const sc=Math.max(sim(T,toks(sy.subject)),sim(T,toks(kf))*.95);if(sc>bs){bs=sc;best=s}}
-  return bs>=70?best:""}
-function guessProgram(){const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))];const H=toks(S.syl.map(s=>s.header).join(" "));
-  let best=progs[0],bs=-1;for(const p of progs){const P=toks(p);let i=0;for(const t of P)if(H.has(t))i++;const sc=P.size?i/P.size:0;if(sc>bs){bs=sc;best=p}}return best}
+  return{name:bs>=70?best:"",sc:bs}}
+function mapSubject(sy,p){return subjScore(sy,p).name}
+const allProgs=()=>[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+function headScore(sy,p){const H=toks(sy.header||"");const P=toks(p);let i=0;for(const t of P)if(H.has(t))i++;return P.size?i/P.size:0}
+/* carpeta del zip → programa: todas las palabras de la carpeta deben estar en el nombre del programa */
+const GENERIC=new Set("syllabus silabo silabos programa programas magister magister mba diplomado curso cursos 2024 2025 2026 2027 2028 nuevos nuevo actualizados zip uai postgrado pregrado".split(" "));
+function folderProgs(folder){const F=[...toks(folder)].filter(t=>!GENERIC.has(t));if(!F.length)return[];
+  return allProgs().filter(p=>{const P=toks(p);return F.every(t=>P.has(t))})}
+/* a qué programa pertenece cada syllabus: carpeta del zip, luego asignaturas en común (el programa que más syllabus cubre va primero) */
+function assignPrograms(){const progs=allProgs();
+  for(const sy of S.syl){sy.cand=[];for(const p of progs){const r=subjScore(sy,p);if(r.name)sy.cand.push({p,sc:r.sc})}sy.cand.sort((a,b)=>b.sc-a.sc);sy.ambig=false;sy.porCarpeta=false}
+  const fixed=new Set(),byFolder=new Map();
+  for(const sy of S.syl){if(S.forceProg){sy.prog=S.forceProg;fixed.add(sy);continue}if(sy.progOverride){sy.prog=sy.progOverride;fixed.add(sy);continue}
+    if(sy.folder){if(!byFolder.has(sy.folder))byFolder.set(sy.folder,[]);byFolder.get(sy.folder).push(sy)}}
+  for(const[f,list]of byFolder){const P=folderProgs(f);if(!P.length)continue;   // carpeta genérica (p. ej. «Syllabus 2027»): se ignora
+    let best=P[0],bn=-1,tie=false;for(const p of P){const n=list.filter(sy=>sy.cand.some(c=>c.p===p)).length+list.reduce((a,sy)=>a+headScore(sy,p),0)/100;if(n>bn){bn=n;best=p;tie=false}else if(n===bn)tie=true}
+    for(const sy of list)if(!fixed.has(sy)){sy.prog=best;sy.porCarpeta=true;sy.folderTie=tie;fixed.add(sy)}}
+  let rest=S.syl.filter(sy=>!fixed.has(sy));const chosen=new Set(S.syl.filter(sy=>fixed.has(sy)).map(sy=>sy.prog));
+  // primero los programas ya elegidos (por carpeta o a mano), después el que cubre más syllabus
+  for(const sy of rest){const c=sy.cand.filter(c=>chosen.has(c.p));if(c.length){sy.prog=c[0].p;sy.ambig=c.length>1&&c[1].sc===c[0].sc;fixed.add(sy)}}
+  rest=rest.filter(sy=>!fixed.has(sy));
+  while(rest.some(sy=>sy.cand.length)){const tally=new Map();for(const sy of rest)for(const c of sy.cand){tally.set(c.p,(tally.get(c.p)||0)+1+headScore(sy,c.p)/100)}
+    let best="",bn=-1;for(const[p,n]of tally)if(n>bn){bn=n;best=p}
+    const cubre=rest.filter(sy=>sy.cand.some(c=>c.p===best));
+    // un programa nuevo con un solo syllabus y un parecido débil no se abre: ese syllabus se queda con su grupo
+    if(chosen.size&&cubre.length<2&&Math.max(...cubre.map(sy=>sy.cand.find(c=>c.p===best).sc))<90)break;
+    chosen.add(best);for(const sy of cubre){sy.prog=best;fixed.add(sy)}
+    rest=rest.filter(sy=>!fixed.has(sy))}
+  // sin asignatura en común: con los de su misma carpeta o, si no, con el programa principal (quedan como «registrar completa» y con aviso)
+  const cnt=new Map();for(const sy of S.syl)if(fixed.has(sy))cnt.set(sy.prog,(cnt.get(sy.prog)||0)+1);
+  let main=[...cnt].sort((a,b)=>b[1]-a[1])[0]?.[0];if(!main){let bs=-1;for(const p of progs){const s=S.syl.reduce((a,sy)=>a+headScore(sy,p),0);if(s>bs){bs=s;main=p}}}
+  for(const sy of rest){const sib=new Map();for(const o of S.syl)if(fixed.has(o)&&o.folder===sy.folder)sib.set(o.prog,(sib.get(o.prog)||0)+1);
+    sy.prog=[...sib].sort((a,b)=>b[1]-a[1])[0]?.[0]||main||progs[0]||""}
+  // asignatura repetida en otro programa: solo se avisa si el programa elegido tiene pocos syllabus (evidencia débil)
+  const per=new Map();for(const sy of S.syl)per.set(sy.prog,(per.get(sy.prog)||0)+1);
+  for(const sy of S.syl){if(fixed.has(sy)&&(sy.progOverride||S.forceProg))continue;const mine=sy.cand.find(c=>c.p===sy.prog);
+    sy.ambig=(sy.porCarpeta&&sy.folderTie)||(!!mine&&!sy.porCarpeta&&sy.cand.some(c=>c.p!==sy.prog&&c.sc>=mine.sc)&&per.get(sy.prog)<3)}}
+function loadedProgs(){return[...new Set(S.syl.map(s=>s.prog).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"))}
 const group=s=>[s,...(EQUIV_ALSO[s]||[])];
-function compute(){const prog=S.con.data.filter(r=>r.programa===S.prog);prog.forEach(r=>{r.T=r.T||toksN(r.titulo);r.U=r.U||(r.titulo.match(URLX)||[]).map(urlKey)});
-  S.syl.forEach(sy=>{sy.map=sy.mapOverride!==undefined?sy.mapOverride:mapSubject(sy)});
+function compute(){assignPrograms();const all={rows:[],salen:[],repe:[],sinSyl:[],subjects:[],hits:[]};
+  for(const p of loadedProgs()){const r=computeProg(p,S.syl.filter(sy=>sy.prog===p));for(const k in all)all[k].push(...r[k])}
+  tambien(all.rows);compraUnica(all.rows);S.res=all}
+function computeProg(P,SYL){const prog=S.con.data.filter(r=>r.programa===P);prog.forEach(r=>{r.T=r.T||toksN(r.titulo);r.U=r.U||(r.titulo.match(URLX)||[]).map(urlKey)});
+  SYL.forEach(sy=>{if(sy.mapOverride!==undefined&&sy.mapOverride&&!programSubjects(P).includes(sy.mapOverride))delete sy.mapOverride;sy.map=sy.mapOverride!==undefined?sy.mapOverride:mapSubject(sy,P)});
   const rows=[],hit=new Map();
-  for(const sy of S.syl){const G=sy.map?group(sy.map):[];const mine=prog.filter(r=>G.includes(r.asignatura));
+  for(const sy of SYL){const G=sy.map?group(sy.map):[];const mine=prog.filter(r=>G.includes(r.asignatura));
     for(const rf of sy.refs){const R=rf.TN||(rf.TN=toksN(rf.ref));let b1=null,s1=0,b2=null,s2=0;
       for(const r of mine){const sc=sim(R,r.T);if(sc>s1){s1=sc;b1=r}}
       for(const r of prog){if(G.includes(r.asignatura))continue;const sc=sim(R,r.T);if(sc>s2){s2=sc;b2=r}}
       const dec=rf.dec||"auto";let est=s1>=85?"ya":s1>=70?"revisar":(s2>=85?"otra":"nuevo");
       if(dec==="ya"&&b1)est="ya";else if(dec==="nuevo")est=s2>=85?"otra":"nuevo";else if(dec==="omitir")est="omitir";
-      const x={sy,asig:sy.subject,asigCon:sy.map,ref:rf.ref,tipoSyl:rf.tipoOverride||rf.tipo,rf,R,cons:b1,cs:s1,otra:b2,os:s2,est,dec,links:rf.links||[],notas:[],cat:null,hridTxt:""};
+      const x={sy,prog:P,asig:sy.subject,asigCon:sy.map,ref:rf.ref,tipoSyl:rf.tipoOverride||rf.tipo,rf,R,cons:b1,cs:s1,otra:b2,os:s2,est,dec,links:rf.links||[],notas:[],cat:null,hridTxt:""};
       x.caso=est==="omitir"?"Omitido":(est==="ya"||est==="revisar")?C2:C1;
       const src=x.caso===C2?b1:(est==="otra"?b2:null);x.src=src;
       if(x.caso===C2&&b1){if(!hit.has(b1))hit.set(b1,[]);hit.get(b1).push(x)}
@@ -654,68 +974,110 @@ function compute(){const prog=S.con.data.filter(r=>r.programa===S.prog);prog.for
       x.revisar=est==="revisar"||x.tipoSyl==="Sin indicar"||/^Revisar a mano/.test(x.notas.join(" "))||x.notas.some(n=>/^Revisar/.test(n));
       x.accion=HACER[x.caso];rows.push(x)}}
   // lo que está en el consolidado y no en el syllabus nuevo de esa asignatura
-  const salen=[],repe=[],sinSyl=[];const nod=new Set(NODICTA[S.prog]||[]);const mapped=[...new Set(S.syl.map(s=>s.map).filter(Boolean))];
+  const salen=[],repe=[],sinSyl=[];const nod=new Set(NODICTA[P]||[]);const mapped=[...new Set(SYL.map(s=>s.map).filter(Boolean))];
   const cubre=a=>mapped.filter(m=>group(m).includes(a));
   for(const r of prog){if(hit.has(r))continue;const T=cubre(r.asignatura);
-    if(!T.length){if(nod.has(r.asignatura))salen.push({r,asigSyl:"",score:0,motivo:"La asignatura ya no se dicta (no está en la malla vigente)."});continue}
+    if(!T.length){if(nod.has(r.asignatura))salen.push({prog:P,r,asigSyl:"",score:0,motivo:"La asignatura ya no se dicta (no está en la malla vigente)."});continue}
     let b=0,porLink=false;for(const x of rows)if(T.includes(x.asigCon)&&x.caso!=="Omitido"){const sc=sim(x.R,r.T);if(sc>b)b=sc;if(r.U.length&&x.links.some(u=>r.U.includes(urlKey(u))))porLink=true}
-    if(porLink){repe.push({r,asigSyl:T[0],score:100,porLink:true});continue}   // el mismo link está en una cita del syllabus nuevo
-    if(b<75)salen.push({r,asigSyl:T[0],score:b,motivo:"No aparece en el syllabus nuevo de esta asignatura."+(b>=55?` Parecido ${b}: revisar a mano.`:"")});else repe.push({r,asigSyl:T[0],score:b})}
-  for(const a of programSubjects())if(!cubre(a).length)sinSyl.push({asig:a,n:prog.filter(r=>r.asignatura===a).length,nodicta:nod.has(a)});
-  const subjects=S.syl.map(sy=>{const rr=rows.filter(x=>x.sy===sy);const bas=rr.filter(x=>x.tipoEf==="Básica"&&x.caso!=="Omitido");
+    if(porLink){repe.push({prog:P,r,asigSyl:T[0],score:100,porLink:true});continue}   // el mismo link está en una cita del syllabus nuevo
+    if(b<75)salen.push({prog:P,r,asigSyl:T[0],score:b,motivo:"No aparece en el syllabus nuevo de esta asignatura."+(b>=55?` Parecido ${b}: revisar a mano.`:"")});else repe.push({prog:P,r,asigSyl:T[0],score:b})}
+  for(const a of programSubjects(P))if(!cubre(a).length)sinSyl.push({prog:P,asig:a,n:prog.filter(r=>r.asignatura===a).length,nodicta:nod.has(a)});
+  const subjects=SYL.map(sy=>{const rr=rows.filter(x=>x.sy===sy);const bas=rr.filter(x=>x.tipoEf==="Básica"&&x.caso!=="Omitido");
     const si=bas.filter(x=>x.disp==="Sí").length,no=bas.filter(x=>x.disp==="No").length,pv=bas.length-si-no;
     const nuevos=rr.filter(x=>x.caso===C1).length,nsale=sy.map?salen.filter(z=>z.asigSyl===sy.map).length:0,nrev=rr.filter(x=>x.revisar).length;
     let estado,cls;if(!sy.refs.length){estado="Sin bibliografía leída";cls="bad"}else if(!sy.map){estado="Registrar completa";cls=""}else if(!nuevos&&!nsale&&!nrev){estado="Completa";cls="ok"}
     else if(nuevos+nsale<=3){estado="Cambio menor";cls=""}else{estado="Volver a analizar";cls="bad"}
-    return{sy,name:sy.subject,map:sy.map,n:rr.length,bas:bas.length,si,no,pv,nuevos,nsale,nrev,estado,cls}});
-  const cuadre={syl:rows.filter(x=>x.caso!=="Omitido").length,nuevo:rows.filter(x=>x.caso===C1).length,ya:rows.filter(x=>x.caso===C2).length,
-    conYa:hit.size+repe.length,conSale:salen.length,conSin:sinSyl.filter(s=>!s.nodicta).reduce((a,s)=>a+s.n,0),conTotal:prog.length};
-  S.res={rows,salen,repe,sinSyl,subjects,cuadre}}
+    return{sy,prog:P,name:sy.subject,map:sy.map,n:rr.length,bas:bas.length,si,no,pv,nuevos,nsale,nrev,estado,cls}});
+  return{rows,salen,repe,sinSyl,subjects,hits:[...hit.keys()].map(r=>({prog:P,r}))}}
+/* «También lo pide»: el mismo título (parecido 85 o más) en otras asignaturas, programas o unidades del consolidado, o en otro syllabus cargado */
+function conIndex(){const C=S.con;if(C.idx)return C.idx;const idx=new Map();C.data.forEach((r,i)=>{r.T=r.T||toksN(r.titulo);for(const t of r.T){let a=idx.get(t);if(!a){a=[];idx.set(t,a)}a.push(i)}});C.idx=idx;return idx}
+const lugar=(p,a)=>`${uniName(progUnit(p))} · ${p} · ${a}`;
+function tambien(rows){const idx=conIndex(),D=S.con.data;
+  for(const x of rows){x.tambien=[];if(x.caso==="Omitido")continue;const G=x.asigCon?group(x.asigCon):[];const seen=new Set();
+    const cnt=new Map();for(const t of x.R){const a=idx.get(t);if(!a||a.length>3000)continue;for(const i of a)cnt.set(i,(cnt.get(i)||0)+1)}
+    for(const[i,c]of cnt){if(c<2)continue;const r=D[i];if(r.programa===x.prog&&(G.includes(r.asignatura)||(!x.asigCon&&r.asignatura===x.asig)))continue;
+      const sc=sim(x.R,r.T);if(sc<85)continue;const k=lugar(r.programa,r.asignatura);if(seen.has(k))continue;seen.add(k);
+      x.tambien.push({k,fila:r.fila,sc,src:"consolidado",r})}
+    for(const y of rows){if(y===x||y.caso==="Omitido"||(y.prog===x.prog&&(y.asigCon||y.asig)===(x.asigCon||x.asig)))continue;
+      const sc=sim(x.R,y.R);if(sc<85)continue;const k=lugar(y.prog,y.asigCon||y.asig);if(seen.has(k))continue;seen.add(k);x.tambien.push({k,fila:null,sc,src:"syllabus",y})}
+    // si en otro programa figura con recurso, no se compra a ciegas: queda por verificar
+    const conRec=x.tambien.find(t=>t.src==="consolidado"&&t.r.recursos>0);
+    if(conRec&&x.disp==="No"){x.disp="Por verificar";x.compra=false;x.revisar=true;x.notas.push(`Revisar a mano: en ${conRec.k} (fila ${conRec.fila}) figura con recurso disponible.`)}}}
+/* una sola compra: si el mismo libro ya se pide en otro lugar, se cuenta una vez */
+function compraUnica(rows){const ya=[];
+  for(const x of rows){if(!x.compra)continue;
+    const enCon=(x.tambien||[]).find(t=>t.src==="consolidado"&&norm(t.r.ocompra)==="comprar");
+    const otro=ya.find(y=>sim(x.R,y.R)>=85);
+    if(enCon){x.compra=false;x.compraUna=`${enCon.k} (fila ${enCon.fila})`;x.notas.push(`Ya figura para compra en ${enCon.k} (fila ${enCon.fila}): una sola compra.`)}
+    else if(otro){x.compra=false;x.compraUna=lugar(otro.prog,otro.asigCon||otro.asig);x.notas.push(`Misma compra que ${x.compraUna}: se cuenta una sola vez.`)}
+    else ya.push(x)}}
+/* la vista: lo que está elegido en los filtros de unidad y programa */
+function inView(p){return(!S.vp||p===S.vp)&&(!S.vu||uniName(progUnit(p))===S.vu)}
+function V(){const R=S.res,f=a=>a.filter(z=>inView(z.prog));const v={rows:f(R.rows),salen:f(R.salen),repe:f(R.repe),sinSyl:f(R.sinSyl),subjects:f(R.subjects),hits:f(R.hits)};
+  v.progs=loadedProgs().filter(inView);const rows=v.rows;
+  v.cuadre={syl:rows.filter(x=>x.caso!=="Omitido").length,nuevo:rows.filter(x=>x.caso===C1).length,ya:rows.filter(x=>x.caso===C2).length,
+    conYa:v.hits.length+v.repe.length,conSale:v.salen.length,conSin:v.sinSyl.filter(s=>!s.nodicta).reduce((a,s)=>a+s.n,0),conTotal:S.con.data.filter(r=>v.progs.includes(r.programa)).length};
+  return v}
+const progLabel=()=>{const L=S.v?S.v.progs:[];return L.length===1?L[0]:`${L.length} programas`};
 
 /* ===================== render ===================== */
 const pct=x=>Math.round(x*100)+"%";
-function renderAll(){compute();renderKpis();renderSem();renderMap();renderChips();renderTable();renderOuts();renderUP();renderAsig();moveSlider()}
+function renderAll(noCompute){if(!noCompute)compute();if(!S.showAll)fillLoaded();S.v=V();renderKpis();renderSem();renderMap();renderChips();renderTable();renderOuts();renderUP();renderAsig();moveSlider();if(window.renderExtra)renderExtra()}
 function cov(rows){const bas=rows.filter(x=>x.tipoEf==="Básica"&&x.caso!=="Omitido");const si=bas.filter(x=>x.disp==="Sí").length,no=bas.filter(x=>x.disp==="No").length;return{bas,si,no,pv:bas.length-si-no}}
-function renderKpis(){const sb=S.res.subjects,rows=S.res.rows;const{bas,si,no,pv}=cov(rows);const nc=rows.filter(x=>x.compra).length;
+function renderAviso(){const sb=S.v.subjects;const sin=sb.filter(s=>s.sy.refs.length&&!s.map),amb=sb.filter(s=>s.sy.ambig&&s.map),box=$("#aviso");
+  const L=a=>a.slice(0,6).map(s=>`<li>«${esc(s.sy.file.split("/").pop())}»${s.sy.cand&&s.sy.cand.length?"":": no se encontró la asignatura en el consolidado"}</li>`).join("")+(a.length>6?`<li>y ${a.length-6} más</li>`:"");
+  if(!sin.length&&!amb.length){box.hidden=true;box.innerHTML="";return}
+  box.hidden=false;box.className="aviso"+(sin.length?"":" info");
+  box.innerHTML=`<span class="ic">${sin.length?"!":"i"}</span><div>${sin.length?`<b class="t">${sin.length} de ${sb.length} syllabus no calzan con ninguna asignatura de ${esc(progLabel())}</b><ul>${L(sin)}</ul>
+    <p>Se tratan como asignaturas nuevas: todos sus títulos se agregan y nada sale del consolidado. Revísalos en «Correspondencia de asignaturas» o usa «Ver todas las unidades».</p>`:""}
+    ${amb.length?`<b class="t">${amb.length} syllabus podrían ser de más de un programa</b><ul>${L(amb)}</ul><p>La asignatura o la carpeta calzan con más de un programa. Se eligió el más probable: confírmalo en «Correspondencia de asignaturas».</p>`:""}</div>
+    <button class="btn" id="avisoBtn">Revisar correspondencia</button>`;
+  $("#avisoBtn").onclick=()=>{$("#ipop").hidden=true;openT("mapbox",true);setTimeout(()=>$("#mapbox").previousElementSibling.scrollIntoView({behavior:"smooth",block:"center"}),300)}}
+function renderKpis(){renderAviso();const sb=S.v.subjects,rows=S.v.rows;const{bas,si,no,pv}=cov(rows);const nc=rows.filter(x=>x.compra).length;
   const comp=sb.filter(s=>s.cls==="ok").length,volver=sb.filter(s=>s.estado==="Volver a analizar").length,reg=sb.filter(s=>s.estado==="Registrar completa").length;
-  const cv=bas.length?(pv?pct(si/bas.length)+"–"+pct((si+pv)/bas.length):pct(si/bas.length)):"—";const c=S.res.cuadre;
-  $("#kpis").innerHTML=`<div class="k glass"><div class="t">Asignaturas completas</div><div class="v num">${comp}</div><div class="s p">De ${sb.length} syllabus · No se vuelven a revisar</div><span class="tri up"></span></div>
-  <div class="k glass"><div class="t">Volver a analizar</div><div class="v num">${volver}</div><div class="s">Tienen títulos nuevos o que salieron</div><span class="tri dn"></span></div>
+  const cv=bas.length?(pv?pct(si/bas.length)+"–"+pct((si+pv)/bas.length):pct(si/bas.length)):"—";const c=S.v.cuadre;const up=comp>sb.length/2;
+  $("#kpis").innerHTML=`<div class="k glass"><div class="t">Asignaturas completas</div><div class="v num">${comp}</div><div class="s${up?" p":""}">${comp} de ${sb.length} syllabus sin cambios</div><span class="tri ${up?"up":"nt"}"></span></div>
+  <div class="k glass"><div class="t">Volver a analizar</div><div class="v num">${volver+reg}</div><div class="s">${volver} con cambios · ${reg} sin par en el consolidado</div><span class="tri ${volver+reg?"dn":"nt"}"></span></div>
   <div class="k glass"><div class="t">Cobertura básica</div><div class="v num">${cv}</div><div class="s">${si} de ${bas.length} seguros${pv?" · "+pv+" por verificar":""}</div><span class="tri nt"></span></div>
   <div class="k glass"><div class="t">Candidatos a compra</div><div class="v num">${nc}</div><div class="s">Básica sin copia física ni digital</div><span class="tri dn"></span></div>`;
-  $("#verdict").textContent=`${c.syl} títulos en ${sb.length} syllabus: ${c.nuevo} nuevos (se agregan) y ${c.ya} que ya estaban (se dejan igual). Del consolidado salen ${c.conSale} filas (en rojo, a «Títulos Sacados de Syllabus»). ${nc?`Hay ${nc} títulos de bibliografía básica para comprar`:"No hay bibliografía básica para comprar"}${pv?` y ${pv} por verificar`:""}.`;
+  $("#verdict").textContent=`${c.syl} títulos en ${sb.length} syllabus${S.v.progs.length>1?` de ${S.v.progs.length} programas`:""}: ${c.nuevo} nuevos (se agregan) y ${c.ya} que ya estaban (se dejan igual). Del consolidado salen ${c.conSale} filas (en rojo, a «Títulos Sacados de Syllabus»). ${nc?`Hay ${nc} títulos de bibliografía básica para comprar`:"No hay bibliografía básica para comprar"}${pv?` y ${pv} por verificar`:""}.`;
   $("#resumen").hidden=false;
   const C=2*Math.PI*80,gap=6,T=Math.max(bas.length,1);[["a1",si,0],["a2",pv,si],["a3",no,si+pv]].forEach(([id,v,o])=>{const e=$("#"+id);if(!v){e.setAttribute("stroke-dasharray",`0 ${C}`);return}
     e.setAttribute("stroke-dasharray",`${Math.max(v/T*C-gap-16,1)} ${C}`);e.setAttribute("stroke-dashoffset",`${-(o/T*C+gap/2+8)}`)});
   $("#ringv").textContent=cv;$("#ringt").textContent=`de ${bas.length} títulos básicos`;
   $("#leg").innerHTML=`<span><i class="sw b1"></i>${si} disponibles</span><span><i class="sw b2"></i>${pv} por verificar</span><span><i class="sw b3"></i>${no} sin recurso</span>`}
-function renderSem(){$("#rows").innerHTML='<div class="r hd"><span>Asignatura</span><span>Estado</span><span>Básica</span><span style="text-align:center">Mín.</span></div>'+S.res.subjects.map(s=>{const t=s.bas||1;
-  return`<div class="r" title="${esc(s.sy.file)}"><span class="a">${esc(s.name)}</span><span class="tag ${s.cls}">${s.estado}</span><span class="bar" title="${s.si} disponibles · ${s.pv} por verificar · ${s.no} sin recurso, de ${s.bas}">${s.si?`<i class="b1" style="width:${s.si/t*100}%"></i>`:""}${s.pv?`<i class="b2" style="width:${s.pv/t*100}%"></i>`:""}${s.no?`<i class="b3" style="width:${s.no/t*100}%"></i>`:""}</span><span class="pc num">${s.bas?Math.round(s.si/t*100)+"%":"—"}</span></div>`}).join("")}
-function renderMap(){const subs=programSubjects();
-  $("#maptbl").innerHTML='<b>Syllabus</b><b>Asignatura en el consolidado</b>'+S.syl.map((sy,i)=>`<span>${esc(sy.subject)}<div class="why">${esc(sy.file.split("/").pop())} · ${sy.refs.length} referencias · año ${esc(sy.version)}</div></span>
-  <select class="sel sm" data-map="${i}"><option value="">(no está: registrar completa)</option>${subs.map(s=>`<option ${s===sy.map?"selected":""}>${esc(s)}</option>`).join("")}</select>`).join("")+
-  (S.res.sinSyl.length?`<b style="grid-column:1/-1;margin-top:10px">Asignaturas del consolidado sin syllabus nuevo</b><span class="why" style="grid-column:1/-1">Si no llegó el syllabus, no se hace nada. Marca solo las que ya no se dictan (revísalo en la malla de la web): sus títulos salen.</span>`+
-    S.res.sinSyl.map(s=>`<span>${esc(s.asig)}<div class="why">${s.n} filas</div></span><label style="display:flex;gap:8px;align-items:center;font-size:12.5px"><input type="checkbox" data-nod="${esc(s.asig)}" ${s.nodicta?"checked":""}> Ya no se dicta</label>`).join(""):"");
-  $$("[data-map]").forEach(el=>el.onchange=()=>{const sy=S.syl[+el.dataset.map];sy.mapOverride=el.value;EQUIV[norm(sy.subject)]=el.value;const own=lsGet("rs_equiv",{});own[norm(sy.subject)]=el.value;lsSet("rs_equiv",own);renderAll()});
-  $$("[data-nod]").forEach(el=>el.onchange=()=>{const a=el.dataset.nod;const l=new Set(NODICTA[S.prog]||[]);el.checked?l.add(a):l.delete(a);NODICTA[S.prog]=[...l];lsSet("rs_nodicta",NODICTA);renderAll()});
-  const fa=$("#fAsig");const cur=fa.value;fa.innerHTML='<option value="">Todas las asignaturas</option>'+S.syl.map((sy,i)=>`<option value="${i}">${esc(sy.subject)}</option>`).join("");fa.value=cur}
+function renderSem(){const mp=S.v.progs.length>1;$("#rows").innerHTML='<div class="r hd"><span>Asignatura</span><span>Estado</span><span>Básica</span><span style="text-align:center">Mín.</span></div>'+S.v.subjects.map(s=>{const t=s.bas||1;
+  return`<div class="r" title="${esc(s.prog+" · "+s.sy.file)}"><span class="a">${esc(s.name)}${mp?`<span class="why" style="display:block">${esc(s.prog)}</span>`:""}</span><span class="tag ${s.cls}">${s.estado}</span><span class="bar" title="${s.si} disponibles · ${s.pv} por verificar · ${s.no} sin recurso, de ${s.bas}">${s.si?`<i class="b1" style="width:${s.si/t*100}%"></i>`:""}${s.pv?`<i class="b2" style="width:${s.pv/t*100}%"></i>`:""}${s.no?`<i class="b3" style="width:${s.no/t*100}%"></i>`:""}</span><span class="pc num">${s.bas?Math.round(s.si/t*100)+"%":"—"}</span></div>`}).join("")}
+function renderMap(){const P=allProgs(),vs=S.syl.filter(sy=>inView(sy.prog)),mp=S.v.progs.length>1;
+  const como=sy=>S.forceProg?"programa elegido en «Ver todas»":sy.progOverride?"programa elegido a mano":sy.porCarpeta?"programa según la carpeta del zip":sy.cand&&sy.cand.length?"programa según sus asignaturas":"sin asignatura en común";
+  $("#maptbl").innerHTML='<b>Syllabus</b><b>Programa y asignatura en el consolidado</b>'+vs.map(sy=>{const i=S.syl.indexOf(sy);const subs=programSubjects(sy.prog);
+    return`<span>${esc(sy.subject)}<div class="why">${esc(sy.file.split("/").pop())} · ${sy.refs.length} referencias · año ${esc(sy.version)} · ${como(sy)}${sy.ambig?" · revisar: la asignatura se repite en otro programa":""}</div></span>
+  <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><select class="sel sm" data-prog="${i}" aria-label="Programa">${P.map(p=>`<option ${p===sy.prog?"selected":""}>${esc(p)}</option>`).join("")}</select>
+  <select class="sel sm" data-map="${i}" aria-label="Asignatura"><option value="">(no está: registrar completa)</option>${subs.map(s=>`<option ${s===sy.map?"selected":""}>${esc(s)}</option>`).join("")}</select></span>`}).join("")+
+  (S.v.sinSyl.length?`<b style="grid-column:1/-1;margin-top:10px">Asignaturas del consolidado sin syllabus nuevo</b><span class="why" style="grid-column:1/-1">Si no llegó el syllabus, no se hace nada. Marca solo las que ya no se dictan (revísalo en la malla de la web): sus títulos salen.</span>`+
+    S.v.sinSyl.map((s,j)=>`<span>${esc(s.asig)}<div class="why">${s.n} filas${mp?" · "+esc(s.prog):""}</div></span><label style="display:flex;gap:8px;align-items:center;font-size:12.5px"><input type="checkbox" data-nod="${j}" ${s.nodicta?"checked":""}> Ya no se dicta</label>`).join(""):"");
+  $$("[data-prog]").forEach(el=>el.onchange=()=>{const sy=S.syl[+el.dataset.prog];sy.progOverride=el.value;delete sy.mapOverride;renderAll()});
+  $$("[data-map]").forEach(el=>el.onchange=()=>{const sy=S.syl[+el.dataset.map];sy.mapOverride=el.value;sy.progOverride=sy.prog;EQUIV[norm(sy.subject)]=el.value;const own=lsGet("rs_equiv",{});own[norm(sy.subject)]=el.value;lsSet("rs_equiv",own);renderAll()});
+  $$("[data-nod]").forEach(el=>el.onchange=()=>{const s=S.v.sinSyl[+el.dataset.nod];const l=new Set(NODICTA[s.prog]||[]);el.checked?l.add(s.asig):l.delete(s.asig);NODICTA[s.prog]=[...l];lsSet("rs_nodicta",NODICTA);renderAll()});
+  const fa=$("#fAsig");const cur=fa.value;fa.innerHTML='<option value="">Todas las asignaturas</option>'+vs.map(sy=>`<option value="${S.syl.indexOf(sy)}">${esc(sy.subject)}${mp?" · "+esc(sy.prog):""}</option>`).join("");fa.value=[...fa.options].some(o=>o.value===cur)?cur:""}
 const FILTERS=[["rev","Revisar a mano",x=>x.revisar],["c1","1. Nuevos",x=>x.caso===C1],["c2","2. Ya estaban",x=>x.caso===C2],["c3","3. Ya no están",null],["compra","Compra",x=>x.compra],["todos","Todos",()=>true]];
-function renderChips(){const box=$("#chips");const rows=S.res.rows;box.innerHTML='<span class="slider" id="slider"></span>'+FILTERS.map(([k,l,f])=>{const n=k==="c3"?S.res.salen.length:rows.filter(f).length;
+function renderChips(){const box=$("#chips");const rows=S.v.rows;box.innerHTML='<span class="slider" id="slider"></span>'+FILTERS.map(([k,l,f])=>{const n=k==="c3"?S.v.salen.length:rows.filter(f).length;
   return`<button class="chip" aria-pressed="${S.filter===k}" data-f="${k}">${l} <b>${n}</b></button>`}).join("");
-  $$("#chips .chip").forEach(c=>c.onclick=()=>{S.filter=c.dataset.f;$$("#chips .chip").forEach(x=>x.setAttribute("aria-pressed",x===c));moveSlider();renderTable()})}
+  $$("#chips .chip").forEach(c=>c.onclick=()=>{S.filter=c.dataset.f;$$("#chips .chip").forEach(x=>x.setAttribute("aria-pressed",x===c));moveSlider();renderTable();openT("tRev",true)})}
 function moveSlider(){const sl=$("#slider"),a=$('#chips .chip[aria-pressed="true"]');if(!sl||!a)return;sl.style.left=a.offsetLeft+"px";sl.style.width=a.offsetWidth+"px"}
 function pill(x){const m={[C1]:"bad",[C2]:"ok",Omitido:""};return`<span class="tag ${m[x.caso]??""}">${x.caso}</span>`}
 function dispPill(x){return x.disp==="Sí"?'<span class="tag pos">Disponible</span>':x.disp==="No"?'<span class="tag bad">Sin recurso</span>':x.disp==="—"?"—":'<span class="tag">Por verificar</span>'}
-function renderTable(){const fa=$("#fAsig").value;const onlyS=fa!==""?S.syl[+fa]:null;
-  if(S.filter==="c3"){const L=S.res.salen.filter(z=>!onlyS||z.asigSyl===onlyS.map);
+function tamHTML(x){return x.tambien&&x.tambien.length?`<div><span class="tam" title="${esc(x.tambien.map(t=>t.k+(t.fila?" (fila "+t.fila+")":" (syllabus nuevo)")).join("\n"))}"><i>${x.tambien.length}</i>También lo pide: ${esc(x.tambien[0].k)}${x.tambien.length>1?` y ${x.tambien.length-1} más`:""}</span></div>`:""}
+function renderTable(){const fa=$("#fAsig").value;const onlyS=fa!==""?S.syl[+fa]:null;const mp=S.v.progs.length>1;
+  if(S.filter==="c3"){const L=S.v.salen.filter(z=>!onlyS||(z.prog===onlyS.prog&&z.asigSyl===onlyS.map));
     $("#thead").innerHTML=`<tr><th>Fila</th><th>Asignatura en el consolidado</th><th>Tipo</th><th>Título en el consolidado</th><th>Recurso</th><th>Motivo</th></tr>`;
-    $("#tbody").innerHTML=L.length?L.map(z=>`<tr><td class="c">${z.r.fila}</td><td>${esc(z.r.asignatura)}</td><td class="c">${esc(z.r.tipo)}</td><td class="l">${esc(z.r.titulo)}</td><td class="c">${z.r.recursos>0?"Sí":"No"}</td><td class="l">${esc(z.motivo)}${z.score?`<div class="why">Parecido máximo ${z.score}</div>`:""}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">Nada en esta vista.</td></tr>';return}
-  const f=FILTERS.find(x=>x[0]===S.filter)[2];const L=S.res.rows.filter(x=>f(x)&&(!onlyS||x.sy===onlyS));
+    $("#tbody").innerHTML=L.length?L.map(z=>`<tr><td class="c">${z.r.fila}</td><td>${esc(z.r.asignatura)}${mp?`<div class="why">${esc(z.prog)}</div>`:""}</td><td class="c">${esc(z.r.tipo)}</td><td class="l">${esc(z.r.titulo)}</td><td class="c">${z.r.recursos>0?"Sí":"No"}</td><td class="l">${esc(z.motivo)}${z.score?`<div class="why">Parecido máximo ${z.score}</div>`:""}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">Nada en esta vista.</td></tr>';return}
+  const f=FILTERS.find(x=>x[0]===S.filter)[2];const L=S.v.rows.filter(x=>f(x)&&(!onlyS||x.sy===onlyS));
   $("#thead").innerHTML="<tr><th>Asignatura</th><th>Tipo en el syllabus</th><th>Referencia del syllabus</th><th>En el consolidado</th><th>Catálogo</th><th>Caso</th><th>Decisión</th></tr>";
   $("#tbody").innerHTML=L.length?L.map(x=>{const i=S.res.rows.indexOf(x);const cons=x.est==="otra"?x.otra:x.cons;
-    return`<tr><td>${esc(x.asig)}</td>
+    return`<tr><td>${esc(x.asig)}${mp?`<div class="why">${esc(x.prog)}</div>`:""}</td>
     <td class="c"><select class="sel sm" data-tipo="${i}">${["Básica","Complementaria","Sin indicar"].map(t=>`<option ${t===x.tipoSyl?"selected":""}>${t}</option>`).join("")}</select></td>
-    <td class="l">${esc(x.ref)}${x.notas.map(n=>`<div class="why">${esc(n)}</div>`).join("")}${x.links.map(u=>`<div class="why"><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.slice(0,80))}</a></div>`).join("")}</td>
+    <td class="l">${esc(x.ref)}${tamHTML(x)}${x.notas.map(n=>`<div class="why">${esc(n)}</div>`).join("")}${x.links.map(u=>`<div class="why"><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.slice(0,80))}</a></div>`).join("")}</td>
     <td class="l">${cons?`<span class="sc">${x.est==="otra"?x.os:x.cs}</span> ${esc(cons.titulo.slice(0,160))}<div class="why">Fila ${cons.fila}${x.est==="otra"?" · "+esc(cons.asignatura):""}</div>`:'<span class="muted">—</span>'}</td>
     <td class="l">${x.cat?`<span class="sc">${x.cat.score}</span> ${esc(x.cat.rec.title.slice(0,120))}<div class="why">${esc(x.cat.rec.author.slice(0,60))}${x.cat.rec.year?" · "+x.cat.rec.year:""}</div>`:'<span class="muted">—</span>'}</td>
     <td class="c">${pill(x)}<div style="margin-top:4px">${dispPill(x)}</div><div class="why">${esc(x.fuente)}</div></td>
@@ -723,9 +1085,9 @@ function renderTable(){const fa=$("#fAsig").value;const onlyS=fa!==""?S.syl[+fa]
   $$("[data-tipo]").forEach(el=>el.onchange=()=>{S.res.rows[+el.dataset.tipo].rf.tipoOverride=el.value;rerender()});
   $$("[data-dec]").forEach(el=>el.onchange=()=>{S.res.rows[+el.dataset.dec].rf.dec=el.value;rerender()})}
 function rerender(){const y=$(".tblwrap").scrollTop;renderAll();$(".tblwrap").scrollTop=y}
-function renderOuts(){const c=S.res.cuadre;const nc=S.res.rows.filter(x=>x.compra).length;
+function renderOuts(){const c=S.v.cuadre;const nc=S.v.rows.filter(x=>x.compra).length;
   $("#outs").innerHTML=[[c.nuevo,"1. Nuevos","→ se agregan al consolidado"],[c.ya,"2. Ya estaban","→ se dejan igual"],[c.conSale,"3. Ya no están","→ en rojo, a «Títulos Sacados de Syllabus»"],
-  [nc,"Lista de compra","→ solo básica, misma edición o superior"],[S.res.subjects.length,"Asignaturas","→ correspondencia y año de versión"],[c.conTotal,"Filas del consolidado revisadas","→ cuadre en la hoja Guía"]]
+  [nc,"Lista de compra","→ solo básica, misma edición o superior, una sola compra por libro"],[S.v.subjects.length,"Asignaturas",S.v.progs.length>1?`→ de ${S.v.progs.length} programas`:"→ correspondencia y año de versión"],[c.conTotal,"Filas del consolidado revisadas","→ cuadre en la hoja Guía"]]
   .map(([v,t,d])=>`<div class="out glass"><span class="v num">${v}</span><h3>${t}</h3><span class="to">${d}</span></div>`).join("")}
 const LEARN={
 p1:`<span class="lbl">Cómo leerlo</span><h3>Qué entra</h3><ol><li><b>Syllabus</b>: el zip tal como llega por correo, o los PDF y Word sueltos.</li><li><b>Consolidado</b>: el Excel de pregrado o postgrado, sin modificarlo.</li><li><b>Existencias</b>: la hoja <b>Existencia</b> del Historico Existencia (mejor exportada aparte, en CSV) y, si lo tienes, BUAI_Ejemplares de Alma.</li></ol><div class="tip">Del Historico Existencia solo se lee la hoja Existencia; las hojas con datos personales no se abren.</div>`,
@@ -734,12 +1096,10 @@ p3:`<span class="lbl">Cómo leerlo</span><h3>Los 3 casos</h3><ol><li><b>1. Nuevo
 p4:`<span class="lbl">Cómo leerlo</span><h3>Qué trae el Excel</h3><ol><li><b>Guía</b>: cómo leerlo y el cuadre de totales.</li><li><b>Cruce</b>: una fila por título, con el formato del consolidado.</li><li><b>Tablas</b>: resumen de los 3 casos, compra y cobertura.</li></ol><div class="tip">El HRID, los ejemplares y los links quedan en «Observación», agregados sin borrar lo que ya tenía.</div>`};
 
 /* ===================== navegación ===================== */
-function show(id){const ai=$$(".jp").findIndex(s=>s.id===id);$$(".jp").forEach((s,i)=>{const on=s.id===id;s.setAttribute("aria-selected",on);s.classList.toggle("done",i<ai);$("#"+s.dataset.p).hidden=!on;if(on){$("#learn").innerHTML=LEARN[s.dataset.p];$("#ptit").textContent=s.dataset.t}});setTimeout(moveSlider,60)}
-$$(".jp").forEach(s=>s.onclick=()=>{if(!s.disabled)show(s.id)});show("j1");
-/* botón «i»: tarjeta «Cómo leerlo» */
-function popOpen(v){$("#pop").hidden=!v;$("#infoBtn").setAttribute("aria-expanded",v)}
-$("#infoBtn").onclick=()=>popOpen($("#pop").hidden);$("#popX").onclick=()=>popOpen(false);
-document.addEventListener("keydown",e=>{if(e.key==="Escape")popOpen(false)});
+/* página continua: cada paso es una sección del acordeón. show() abre esa sección, cierra las demás y la alinea bajo la barra de pasos (goSec, al final) */
+function setLearn(p){$("#learn").innerHTML=LEARN[p]||""}
+function show(id){const s=$("#"+id);if(!s)return;setLearn(s.dataset.p);if(window.goSec)goSec(s.dataset.go);setTimeout(moveSlider,60)}
+setLearn("p1");
 /* etapas del cruce (franja grafito) */
 function etapa(i,txt){$$(".et").forEach((el,j)=>{el.classList.toggle("on",j===i);el.classList.toggle("done",j<i)});$("#etapas").classList.toggle("run",i>=0&&i<4);if(txt&&i>=0&&i<4)$("#e"+(i+1)).textContent=txt}
 
@@ -751,9 +1111,31 @@ function fillUnits(sel){const us=[...new Set(S.con.data.filter(r=>r.programa).ma
   $("#uCount").textContent=`${us.length} unidad${us.length>1?"es":""} en el archivo`;fillProgs(u)}
 function fillProgs(u,keep){const ps=[...new Set(S.con.data.filter(r=>r.programa&&uniName(r.unidad)===u).map(r=>r.programa))].sort((a,b)=>a.localeCompare(b,"es"));
   const p=keep&&ps.includes(keep)?keep:ps[0];$("#prog").innerHTML=ps.map(x=>`<option ${x===p?"selected":""}>${esc(x)}</option>`).join("");$("#prog").disabled=false;
-  $("#pCount").textContent=`${ps.length} programa${ps.length>1?"s":""} en esta unidad`;S.prog=p||"";renderUP();if(!S.res)renderAsig()}
-function renderUP(){if(!S.con)return;const u=$("#uSel").value,ur=S.con.data.filter(r=>r.programa&&uniName(r.unidad)===u),pr=S.con.data.filter(r=>r.programa===S.prog);
-  const n=a=>a.toLocaleString("es-CL");
+  $("#pCount").textContent=`${ps.length} programa${ps.length>1?"s":""} en esta unidad`;S.prog=p||"";if(!S.res){renderUP();renderAsig()}}
+/* después de comparar: los filtros muestran solo la unidad y el programa de los syllabus cargados */
+const nSyl=p=>S.syl.filter(s=>s.prog===p).length;
+function fillLoaded(){const L=loadedProgs(),allU=new Set(S.con.data.filter(r=>r.programa).map(r=>uniName(r.unidad))).size;
+  const us=[...new Set(L.map(p=>uniName(progUnit(p))))].sort((a,b)=>a.localeCompare(b,"es"));
+  if(S.vu&&!us.includes(S.vu))S.vu="";if(us.length===1)S.vu=us[0];
+  $("#uSel").innerHTML=(us.length>1?`<option value="" ${!S.vu?"selected":""}>Todas las cargadas (${us.length})</option>`:"")+us.map(u=>`<option value="${esc(u)}" ${u===S.vu?"selected":""}>${esc(u)}</option>`).join("");$("#uSel").disabled=false;
+  $("#uCount").textContent=`Según los syllabus · ${us.length} de ${allU}`;
+  const ps=L.filter(p=>!S.vu||uniName(progUnit(p))===S.vu);if(S.vp&&!ps.includes(S.vp))S.vp="";if(ps.length===1)S.vp=ps[0];
+  $("#prog").innerHTML=(ps.length>1?`<option value="" ${!S.vp?"selected":""}>Todos los cargados (${ps.length})</option>`:"")+ps.map(p=>`<option value="${esc(p)}" ${p===S.vp?"selected":""}>${esc(p)}</option>`).join("");$("#prog").disabled=false;
+  $("#pCount").textContent=`Según los syllabus · ${ps.length} programa${ps.length>1?"s":""}`;S.prog=S.vp||ps[0]||"";
+  const sb=S.syl.filter(s=>ps.includes(s.prog)),ok=sb.filter(s=>s.map).length;
+  $("#uDet").innerHTML=`<i></i>${S.forceProg?"Elegida a mano":"Elegida según los syllabus cargados"}`;
+  $("#pDet").innerHTML=`<i></i>${ok} de ${sb.length} asignaturas coinciden`;$("#pDet").className="det"+(ok<sb.length/2?" gr":"");
+  $("#uDet").hidden=$("#pDet").hidden=$("#verU").hidden=$("#verP").hidden=false;$("#uDet").className="det";$("#verU").textContent="Ver todas las unidades";$("#verP").textContent="Ver todos los programas"}
+function verTodas(){if(!S.res)return;if(S.showAll){S.showAll=false;S.forceProg="";renderAll();return}
+  S.showAll=true;const p=S.prog;fillUnits(uniName(progUnit(p)));fillProgs($("#uSel").value,p);
+  $("#uCount").textContent="Todas las unidades del archivo";$("#pCount").textContent="Elige el programa a mano";
+  $("#uDet").innerHTML="<i></i>Lista completa: lo que elijas se aplica a todos los syllabus";$("#uDet").className="det gr";$("#pDet").hidden=true;
+  $("#verU").textContent=$("#verP").textContent="Volver a lo detectado"}
+function renderUP(){if(!S.con)return;const n=a=>a.toLocaleString("es-CL");
+  if(S.res&&!S.showAll){const ps=S.v.progs,pr=S.con.data.filter(r=>ps.includes(r.programa)),ur=S.con.data.filter(r=>r.programa&&(!S.vu||uniName(r.unidad)===S.vu)&&loadedProgs().includes(r.programa));
+    $("#uMini").innerHTML=`<div><b class="num">${n(new Set(ur.map(r=>r.programa)).size)}</b><span>Programas</span></div><div><b class="num">${n(new Set(ur.map(r=>r.programa+"|"+r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(ur.length)}</b><span>Títulos</span></div>`;
+    $("#pMini").innerHTML=`<div><b>${esc(S.con.nivel)}</b><span>Nivel</span></div><div><b class="num">${n(new Set(pr.map(r=>r.programa+"|"+r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(pr.length)}</b><span>Títulos</span></div>`;return}
+  const u=$("#uSel").value,ur=S.con.data.filter(r=>r.programa&&uniName(r.unidad)===u),pr=S.con.data.filter(r=>r.programa===S.prog);
   $("#uMini").innerHTML=`<div><b class="num">${n(new Set(ur.map(r=>r.programa)).size)}</b><span>Programas</span></div><div><b class="num">${n(new Set(ur.map(r=>r.programa+"|"+r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(ur.length)}</b><span>Títulos</span></div>`;
   $("#pMini").innerHTML=`<div><b>${esc(S.con.nivel)}</b><span>Nivel</span></div><div><b class="num">${n(new Set(pr.map(r=>r.asignatura)).size)}</b><span>Asignaturas</span></div><div><b class="num">${n(pr.length)}</b><span>Títulos</span></div>`}
 const dCls=c=>c==="ok"?"d-ok":c==="bad"?"d-bad":"d-mid";
@@ -761,9 +1143,10 @@ function itHTML(nm,n,cls,txt,i,extra){return`<div class="it ${extra||"leido"}" s
 function renderAsig(live){const box=$("#asigs");if(!S.con)return;
   if(live){$("#aTit").textContent="Syllabus leídos";$("#aCount").textContent=`${live.length} de ${live.total} leídos`;
     box.innerHTML=`<div class="grid">${live.map((sy,i)=>{const bad=sy.error||!sy.refs.length;return itHTML(sy.subject,sy.refs.length,bad?"d-bad":"",bad?"Sin bibliografía leída":"",i,bad?"err":"leido")}).join("")}</div>`;return}
-  if(S.res){const sb=S.res.subjects;$("#aTit").textContent=`Asignaturas · ${S.prog}`;$("#aCount").textContent=`${sb.length} de ${sb.length} leídas`;
-    let h=`<div class="yr">Con syllabus nuevo</div><div class="grid">${sb.map((s,i)=>itHTML(s.name,s.n,s.estado==="Registrar completa"?"d-new":dCls(s.cls),s.estado,i,s.sy.error||!s.sy.refs.length?"err":"leido")).join("")}</div>`;
-    if(S.res.sinSyl.length)h+=`<div class="yr">En el consolidado, sin syllabus nuevo</div><div class="grid">${S.res.sinSyl.map((s,i)=>itHTML(s.asig,s.n,s.nodicta?"d-bad":"d-mid",s.nodicta?"Ya no se dicta":"No llegó syllabus",i,"pend")).join("")}</div>`;
+  if(S.res&&S.v){const ps=S.v.progs,mp=ps.length>1;$("#aTit").textContent=`Asignaturas · ${progLabel()}`;$("#aCount").textContent=`${S.v.subjects.length} de ${S.v.subjects.length} leídas`;
+    let h="";for(const p of ps){const sb=S.v.subjects.filter(s=>s.prog===p),ss=S.v.sinSyl.filter(s=>s.prog===p);
+      h+=`<div class="yr">${mp?esc(p)+" · ":""}Con syllabus nuevo</div><div class="grid">${sb.map((s,i)=>itHTML(s.name,s.n,s.estado==="Registrar completa"?"d-new":dCls(s.cls),s.estado,i,s.sy.error||!s.sy.refs.length?"err":"leido")).join("")}</div>`;
+      if(ss.length)h+=`<div class="yr">${mp?esc(p)+" · ":""}En el consolidado, sin syllabus nuevo</div><div class="grid">${ss.map((s,i)=>itHTML(s.asig,s.n,s.nodicta?"d-bad":"d-mid",s.nodicta?"Ya no se dicta":"No llegó syllabus",i,"pend")).join("")}</div>`}
     box.innerHTML=h;return}
   const pr=S.con.data.filter(r=>r.programa===S.prog);const m=new Map();pr.forEach(r=>m.set(r.asignatura,(m.get(r.asignatura)||0)+1));
   $("#aTit").textContent=`Asignaturas · ${S.prog}`;$("#aCount").textContent=`${m.size} en el consolidado`;
@@ -780,7 +1163,7 @@ async function loadCatalogs(files){let all={recs:[],rows:0,baja:0,tipos:[]};for(
 bindDrop($("#dSyl"),$("#fSyl"),files=>{if(!files.length)return;S.sylFiles=files;$("#nSyl").textContent=files.map(f=>f.name).join(", ");$("#mSyl").textContent=files.length+" archivo(s)";st("#sSyl","ok","Listo para leer");ready()});
 bindDrop($("#dCon"),$("#fCon"),async files=>{const f=files[0];if(!f)return;$("#nCon").textContent=f.name;st("#sCon","","Leyendo… (puede tardar unos segundos)");await sleep(30);
   try{S.con=readConsolidado(await f.arrayBuffer());const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
-    fillUnits();
+    if(S.res&&S.syl.length){S.vu=S.vp="";S.showAll=false;S.forceProg="";renderAll()}else fillUnits();
     $("#mCon").textContent=`${S.con.nivel} · ${S.con.data.length.toLocaleString("es-CL")} filas · ${progs.length} programas`;st("#sCon","ok","Listo");}
   catch(e){S.con=null;st("#sCon","err",e.message)}ready()});
 bindDrop($("#dCat"),$("#fCat"),async files=>{if(!files.length)return;st("#sCat","","Leyendo… (la hoja Existencia puede tardar un minuto)");await sleep(30);
@@ -788,22 +1171,28 @@ bindDrop($("#dCat"),$("#fCat"),async files=>{if(!files.length)return;st("#sCat",
     $("#mCat").textContent=`${[...new Set(all.tipos)].join(" + ")} · ${all.recs.length.toLocaleString("es-CL")} títulos · ${all.rows.toLocaleString("es-CL")} ejemplares${all.baja?" · "+all.baja.toLocaleString("es-CL")+" dados de baja (no cuentan)":""}`;st("#sCat","ok","Listo");
     if(all.recs.length<1000)st("#sCat","err",`Solo ${all.recs.length} títulos: ¿el informe tiene un filtro de fecha?`);if(S.res){renderAll()}}
   catch(e){S.cat=null;st("#sCat","err",e.message)}});
-$("#prog").onchange=()=>{S.prog=$("#prog").value;renderUP();if(S.res){S.syl.forEach(s=>delete s.mapOverride);renderAll()}else renderAsig()};
-$("#uSel").onchange=()=>{S.progChosen=true;fillProgs($("#uSel").value);if(S.res){S.syl.forEach(s=>delete s.mapOverride);renderAll()}};
-$("#fAsig").onchange=renderTable;
+$("#prog").onchange=()=>{const v=$("#prog").value;
+  if(!S.res){S.prog=v;renderUP();renderAsig();return}
+  if(S.showAll){S.forceProg=v;S.prog=v;S.syl.forEach(s=>delete s.mapOverride);S.vu="";S.vp="";renderAll();return}   // elegido a mano en «Ver todas»: aplica a todos los syllabus
+  S.vp=v;renderAll(true)};
+$("#uSel").onchange=()=>{const v=$("#uSel").value;
+  if(!S.res){fillProgs(v);return}
+  if(S.showAll){fillProgs(v);S.forceProg=$("#prog").value;S.prog=S.forceProg;S.syl.forEach(s=>delete s.mapOverride);S.vu="";S.vp="";renderAll();return}
+  S.vu=v;S.vp="";renderAll(true)};
+$("#verU").onclick=$("#verP").onclick=e=>{e.preventDefault();verTodas()};
+$("#fAsig").onchange=()=>{renderTable();openT("tRev",true)};
 $("#go").onclick=async()=>{$("#go").disabled=true;try{S.res=null;etapa(0,"Preparando…");setLog("Leyendo syllabus…",5);
     S.syl=await readSyllabusFiles(S.sylFiles,(list,total)=>{etapa(0,`${list.length} de ${total}`);$("#fill").style.width=(5+list.length/Math.max(total,1)*45)+"%";list.total=total;renderAsig(list)});
     const nref=S.syl.reduce((a,s)=>a+s.refs.length,0),bad=S.syl.filter(s=>s.error||!s.refs.length);
     etapa(1,`${nref} referencias`);setLog(`${S.syl.length} syllabus leídos · ${nref} referencias. Cruzando con el consolidado…`,60);await sleep(500);
-    if(!S.progChosen){const g=guessProgram();fillUnits(progUnit(g));fillProgs($("#uSel").value,g)}
+    S.vu="";S.vp="";S.showAll=false;S.forceProg="";
     renderAll();
     etapa(2,S.cat?`${S.cat.recs.length.toLocaleString("es-CL")} títulos revisados`:"Sin existencias cargadas");setLog("Buscando los títulos nuevos en las existencias…",80);await sleep(500);
     etapa(3,"Guía, Cruce y Tablas");setLog("Preparando el Excel…",92);await sleep(400);
     etapa(4);$("#e4").textContent="Listo para descargar";
-    setLog(`Listo: ${S.syl.length} syllabus, ${nref} referencias, programa «${S.prog}».`+(bad.length?` Ojo: no se leyó bibliografía en ${bad.map(s=>s.file.split("/").pop()).join(", ")}.`:""),100);
-    $$(".jp").forEach(j=>j.disabled=false);await sleep(500);show("j2");window.__listo2=true}
+    setLog(`Listo: ${S.syl.length} syllabus, ${nref} referencias, ${loadedProgs().length>1?loadedProgs().length+" programas":"programa «"+loadedProgs()[0]+"»"}.`+(bad.length?` Ojo: no se leyó bibliografía en ${bad.map(s=>s.file.split("/").pop()).join(", ")}.`:""),100);
+    $$(".jp").forEach(j=>j.disabled=false);if(window.unlock)unlock();await sleep(500);show("j2");window.__listo2=true}
   catch(e){console.error(e);etapa(-1);setLog("Error: "+e.message,0);window.__error=e.message}$("#go").disabled=false};
-$("#prog").addEventListener("change",()=>S.progChosen=true);
 
 /* ===================== exportar ===================== */
 const BLACK={type:"pattern",pattern:"solid",fgColor:{argb:"FF000000"}},WHITE={bold:true,color:{argb:"FFFFFFFF"}};
@@ -819,16 +1208,17 @@ function addTabla(ws,top,head,data,total){TNUM++;const name="Tabla"+TNUM;const r
   hdr(ws.getRow(top));for(let i=0;i<rows.length;i++){const r=ws.getRow(top+1+i);fmtRow(r);if(total&&i===rows.length-1)r.eachCell({includeEmpty:true},c=>{c.font={bold:true};c.alignment={horizontal:"center",vertical:"middle"}})}
   return top+rows.length+3}
 function linkCell(cell,text,url){if(!url){cell.value=text;return}cell.value={text,hyperlink:/^https?:/i.test(url)?url:"http://"+url}}
-$("#dl").onclick=async()=>{if(!S.res)return;TNUM=0;const R=S.res,wb=new ExcelJS.Workbook();const hoy=new Date().toLocaleDateString("es-CL"),yr=new Date().getFullYear();
-  const prog=S.con.data.filter(r=>r.programa===S.prog),c0=prog[0]||{};const HI=S.con.head.map((h,i)=>[h,i]).filter(([h])=>h);
+$("#dl").onclick=async()=>{if(!S.res)return;TNUM=0;const R=S.v,wb=new ExcelJS.Workbook();const hoy=new Date().toLocaleDateString("es-CL"),yr=new Date().getFullYear();
+  const prog=S.con.data.filter(r=>R.progs.includes(r.programa)),C0=p=>S.con.data.find(r=>r.programa===p)||{},mp=R.progs.length>1,PL=progLabel();
+  const tamTxt=x=>(x.tambien||[]).map(t=>t.k+(t.fila?` (fila ${t.fila})`:" (syllabus nuevo)")).join(" · ");const HI=S.con.head.map((h,i)=>[h,i]).filter(([h])=>h);
   const pos=nm=>HI.findIndex(([h])=>norm(h)===nm);const put=(v,nm,val)=>{const p=pos(nm);if(p>=0)v[p]=val};const get=(v,nm)=>{const p=pos(nm);return p>=0?v[p]:""};
   const addObs=(v,t)=>{if(!t)return;const p=pos("observacion");if(p<0)return;const cur=String(v[p]??"").trim();v[p]=cur?(cur.includes(t)?cur:cur+" · "+t):t};
   const fromRaw=r=>HI.map(([h,i])=>r.raw[i]===undefined?"":r.raw[i]);
-  const A=["Situación","Origen","Asignatura (syllabus)","Tipo en syllabus","Candidato a compra","Fila en consolidado","Qué difiere","Qué se debe hacer","Fuente de la disponibilidad","Parecido en consolidado","Parecido en catálogo"];
+  const A=["Situación","Programa","Origen","Asignatura (syllabus)","Tipo en syllabus","Candidato a compra","Fila en consolidado","Qué difiere","Qué se debe hacer","Fuente de la disponibilidad","Parecido en consolidado","Parecido en catálogo","También lo pide"];
   const cr=[];
-  for(const x of R.rows){if(x.caso==="Omitido")continue;let v;
+  for(const x of R.rows){if(x.caso==="Omitido")continue;let v;const c0=C0(x.prog);
     if(x.caso===C2){v=fromRaw(x.cons);if(x.disp==="Sí"&&x.cons.recursos<=0){put(v,"titulo fisico biblioteca",x.fis);put(v,"recurso electronico digital digitalizados",x.ele);put(v,"recursos disponibles",1)}addObs(v,x.hridTxt)}
-    else{v=HI.map(()=>"");const base={"grado academico":c0.grado||"","ciclo":c0.ciclo||"","unidad academica":c0.unidad||"","ano de version":x.sy.version,"programa academico":S.prog,"asignatura":x.asigCon||x.asig,
+    else{v=HI.map(()=>"");const base={"grado academico":c0.grado||"","ciclo":c0.ciclo||"","unidad academica":c0.unidad||"","ano de version":x.sy.version,"programa academico":x.prog,"asignatura":x.asigCon||x.asig,
         "sigla":"Sin Informacion","semestre academico":"Sin informacion","tipo de bibliografia":x.tipo==="Sin indicar"?"Básica":x.tipo,"titulo autor":x.ref,"ano ed syllabus":anio(x.ref)||"Sin Informacion",
         "tipo de material":x.tmat,"ano procesamiento":yr,"campo calculado":1,"cuenta de titulo":1};for(const[k,val]of Object.entries(base))put(v,k,val);
       if(x.est==="otra"){const s=fromRaw(x.otra);for(const k of["ano ed bca","titulo fisico biblioteca","recurso electronico digital digitalizados","recursos disponibles","hrid","tipo de material","observacion"])put(v,k,get(s,k))}
@@ -838,25 +1228,29 @@ $("#dl").onclick=async()=>{if(!S.res)return;TNUM=0;const R=S.res,wb=new ExcelJS.
       if(x.disp==="Sí"&&x.est==="otra"&&!x.otra.recursos){put(v,"titulo fisico biblioteca",x.fis);put(v,"recurso electronico digital digitalizados",x.ele);put(v,"recursos disponibles",1)}
       addObs(v,x.hridTxt);put(v,"contabilizacion materiales cobertura",CONTA.has(x.tmat)?1:"");
       if(x.tipo==="Complementaria"){put(v,"estado adquisicion","Por Definir");put(v,"formato","Por Definir")}
-      if(x.compra)put(v,"observacion de compra","Comprar")}
+      if(x.compra)put(v,"observacion de compra","Comprar");else if(x.compraUna)put(v,"observacion de compra","Una sola compra con "+x.compraUna)}
     if(x.links.length)addObs(v,"Enlace: "+x.links.join(" · "));
     const cons=x.est==="otra"?x.otra:x.cons;
-    cr.push({k:norm(x.asigCon||x.asig),o:0,caso:x.caso,link:x.links[0],a:[x.caso,"Syllabus",x.asig,x.tipoSyl,x.compra?"Sí":"No",x.caso===C2&&x.cons?x.cons.fila:(x.est==="otra"?x.otra.fila:"no aplica"),[...(x.caso===C1&&x.est!=="otra"?["No está en el consolidado."]:[]),...x.notas].join(" ")||"—",x.accion,x.fuente,cons?(x.est==="otra"?x.os:x.cs):"",x.cat?x.cat.score:""],v})}
+    cr.push({k:norm(x.prog)+"|"+norm(x.asigCon||x.asig),o:0,caso:x.caso,link:x.links[0],a:[x.caso,x.prog,"Syllabus",x.asig,x.tipoSyl,x.compra?"Sí":x.compraUna?"Una sola compra con "+x.compraUna:"No",x.caso===C2&&x.cons?x.cons.fila:(x.est==="otra"?x.otra.fila:"no aplica"),[...(x.caso===C1&&x.est!=="otra"?["No está en el consolidado."]:[]),...x.notas].join(" ")||"—",x.accion,x.fuente,cons?(x.est==="otra"?x.os:x.cs):"",x.cat?x.cat.score:"",tamTxt(x)||"—"],v})}
   for(const z of R.salen){const v=fromRaw(z.r);if(norm(get(v,"observacion de compra"))==="comprar")put(v,"observacion de compra","No comprar: salió del syllabus");
-    cr.push({k:norm(z.r.asignatura),o:1,caso:C3,a:[C3,"Solo consolidado","—","—","No",z.r.fila,z.motivo,HACER[C3],"Consolidado",z.score||"",""],v})}
-  for(const z of R.repe){const v=fromRaw(z.r);cr.push({k:norm(z.r.asignatura),o:1,caso:C2,a:[C2,"Solo consolidado","—","—","No",z.r.fila,"El título sigue en el syllabus nuevo y ya está en otra fila del consolidado (otra versión, año o edición).",HACER[C2],"Consolidado",z.score,""],v})}
+    cr.push({k:norm(z.prog)+"|"+norm(z.r.asignatura),o:1,caso:C3,a:[C3,z.prog,"Solo consolidado","—","—","No",z.r.fila,z.motivo,HACER[C3],"Consolidado",z.score||"","","—"],v})}
+  for(const z of R.repe){const v=fromRaw(z.r);cr.push({k:norm(z.prog)+"|"+norm(z.r.asignatura),o:1,caso:C2,a:[C2,z.prog,"Solo consolidado","—","—","No",z.r.fila,"El título sigue en el syllabus nuevo y ya está en otra fila del consolidado (otra versión, año o edición).",HACER[C2],"Consolidado",z.score,"","—"],v})}
   cr.sort((p,q)=>p.k.localeCompare(q.k,"es")||p.o-q.o);
   // Guía
-  const c=R.cuadre,nc=R.rows.filter(x=>x.compra).length;
-  const G=[["1. Qué es este archivo",""],["Objetivo",`Comparar la bibliografía de los syllabus nuevos de ${S.prog} con el consolidado, con las reglas de trabajo de siempre.`],
-    ["Archivos usados",`Syllabus: ${S.syl.map(s=>s.file.split("/").pop()).join("; ")} · Consolidado: ${S.con.sheet} · Catálogo: ${S.cat?[...new Set(S.cat.tipos)].join(" + "):"no se cargó"}`],["Fecha",hoy],
+  const c=R.cuadre,nc=R.rows.filter(x=>x.compra).length,nUna=R.rows.filter(x=>x.compraUna).length,nTam=R.rows.filter(x=>x.tambien&&x.tambien.length).length;
+  const sinPar=R.subjects.filter(s=>s.sy.refs.length&&!s.map);
+  const G=[["1. Qué es este archivo",""],["Objetivo",`Comparar la bibliografía de los syllabus nuevos de ${mp?R.progs.length+" programas ("+R.progs.join("; ")+")":PL} con el consolidado, con las reglas de trabajo de siempre.`],
+    ...(sinPar.length?[["Aviso",`${sinPar.length} de ${R.subjects.length} syllabus no calzan con ninguna asignatura del consolidado: ${sinPar.map(s=>s.sy.file.split("/").pop()).join("; ")}. Se trataron como asignaturas nuevas. Revisa la hoja Asignaturas.`]]:[]),
+    ["Archivos usados",`Syllabus: ${S.syl.filter(s=>R.progs.includes(s.prog)).map(s=>s.file.split("/").pop()).join("; ")} · Consolidado: ${S.con.sheet} · Catálogo: ${S.cat?[...new Set(S.cat.tipos)].join(" + "):"no se cargó"}`],["Fecha",hoy],
     ["2. Los 3 casos (hoja Cruce)",""],[C1,`${SIGNIF[C1]} Se agrega. (${c.nuevo} títulos)`],[C2,`${SIGNIF[C2]} Se deja igual, también su tipo. (${c.ya} títulos del syllabus, que ocupan ${c.conYa} filas del consolidado)`],
     [C3,`${SIGNIF[C3]} Se marca en rojo y pasa a «Títulos Sacados de Syllabus». No se borra. (${c.conSale} filas)`],
     ["Existencia","«Titulo Fisico Biblioteca» = 1 si hay ejemplares en cualquier biblioteca (sin contar los dados de baja); «Recurso Electronico» = 1 si lo tenemos en digital; «Recursos Disponibles» = 1 si está en físico o digital. El HRID, los ejemplares y las bibliotecas se agregan en «Observación», sin borrar lo que ya tenía."],
     ["Edición","Siempre se considera la misma edición o una superior a la que pide el syllabus, para poner el 1 y para la compra. Si solo hay una anterior, no cuenta y, si es básica, se compra. Si falta el dato, no se descarta."],
     ["Links","Si la cita trae un link (escrito o como vínculo del PDF o Word), queda en «Observación» con vínculo."],["Artículos","Cuentan para la cobertura: llevan 1 en «Contabilizacion Materiales Cobertura»."],
     ["Sin syllabus","Si no llegó el syllabus de una asignatura, no se hace nada. Solo si ya no se dicta, sus títulos salen."],
-    ["Compra",`Solo bibliografía básica que no tengamos: libro o e-book sin ejemplar físico ni electrónico. (${nc} títulos)`],
+    ["Compra",`Solo bibliografía básica que no tengamos: libro o e-book sin ejemplar físico ni electrónico. (${nc} títulos)${nUna?` Además, ${nUna} títulos se piden en más de un lugar: se cuentan una sola vez («Una sola compra con…»).`:""}`],
+    ["También lo pide",`El mismo título (parecido 85 o más) está en otra asignatura, programa o unidad del consolidado, o en otro syllabus cargado. Va en la columna «También lo pide». (${nTam} títulos)`],
+    ...(mp?[["Varios programas","Cada syllabus se comparó solo con las asignaturas de su programa (por la carpeta del zip o por sus asignaturas). La columna «Programa» permite filtrar."]]:[]),
     ["3. Cómo comprobar que está completo",""],["Syllabus",`${c.syl} títulos = ${c.nuevo} nuevos + ${c.ya} que ya estaban.`],
     ["Consolidado",`${c.conTotal} filas = ${c.conYa} que ya estaban + ${c.conSale} que ya no están${c.conSin?` + ${c.conSin} de asignaturas sin syllabus (no se hace nada)`:""}.`],
     ["4. Hojas",""],["Tablas","Resumen de los 3 casos, compra, casos por asignatura y cobertura."],["Syllabus (zip)","La bibliografía tal como viene en los syllabus nuevos."],["Consolidado","Las filas del programa en el consolidado, sin cambios."],
@@ -866,35 +1260,36 @@ $("#dl").onclick=async()=>{if(!S.res)return;TNUM=0;const R=S.res,wb=new ExcelJS.
     if(!e){g.mergeCells(r.number,1,r.number,2);r.getCell(1).font={bold:true,size:12}}else r.getCell(1).font={bold:true};if(t===C3)r.eachCell(cc=>{cc.fill=RED})});
   g.getColumn(1).width=34;g.getColumn(2).width=110;g.views=[{state:"frozen",ySplit:1}];
   // Tablas
-  const td=wb.addWorksheet("Tablas");td.getCell("A1").value=`Resumen del cruce · ${S.prog} · syllabus nuevos vs consolidado`;td.getCell("A1").font={bold:true,size:13};
+  const td=wb.addWorksheet("Tablas");td.getCell("A1").value=`Resumen del cruce · ${PL} · syllabus nuevos vs consolidado`;td.getCell("A1").font={bold:true,size:13};
   let top=addTabla(td,3,["Caso","Qué significa","Qué se hace","Títulos del syllabus","Filas del consolidado"],[[C1,SIGNIF[C1],HACER[C1],c.nuevo,0],[C2,SIGNIF[C2],HACER[C2],c.ya,c.conYa],[C3,SIGNIF[C3],HACER[C3],0,c.conSale]],["Total","","",c.syl,c.conYa+c.conSale]);
   for(let j=1;j<=5;j++){td.getRow(6).getCell(j).fill=RED;td.getRow(6).getCell(j).font=REDF}
   if(c.conSin){td.getCell("A"+(top-2)).value=`Además, ${c.conSin} filas son de asignaturas sin syllabus nuevo: no se hace nada.`;td.getCell("A"+(top-2)).font={italic:true}}
   top=addTabla(td,top,["Regla de compra","Qué significa","Qué se hace","Títulos"],[["Solo bibliografía básica","Básica, libro o e-book, sin ejemplar físico ni electrónico (misma edición o superior).","Se compra",nc]]);
-  const asigs=[...new Set(cr.map(z=>z.v[pos("asignatura")]).map(s=>String(s||"").trim()))].sort((a,b)=>a.localeCompare(b,"es"));
-  const cnt=(a,k)=>cr.filter(z=>String(z.v[pos("asignatura")]||"").trim()===a&&z.caso===k).length;
+  const aLab=z=>String(z.v[pos("asignatura")]||"").trim()+(mp?" · "+z.a[1]:"");const sLab=s=>(s.map||s.name)+(mp?" · "+s.prog:"");
+  const asigs=[...new Set(cr.map(aLab))].sort((a,b)=>a.localeCompare(b,"es"));
+  const cnt=(a,k)=>cr.filter(z=>aLab(z)===a&&z.caso===k).length;
   top=addTabla(td,top,["Asignatura","1. Nuevo","2. Ya estaba","3. Ya no está","Total"],asigs.map(a=>[a,cnt(a,C1),cnt(a,C2),cnt(a,C3),cnt(a,C1)+cnt(a,C2)+cnt(a,C3)]),["Total general",cr.filter(z=>z.caso===C1).length,cr.filter(z=>z.caso===C2).length,cr.filter(z=>z.caso===C3).length,cr.length]);
-  const comp=R.subjects.filter(s=>R.rows.some(x=>x.sy===s.sy&&x.compra)).map(s=>[s.map||s.name,R.rows.filter(x=>x.sy===s.sy&&x.compra).length]);
+  const comp=R.subjects.filter(s=>R.rows.some(x=>x.sy===s.sy&&x.compra)).map(s=>[sLab(s),R.rows.filter(x=>x.sy===s.sy&&x.compra).length]);
   top=addTabla(td,top,["Asignatura","Títulos para comprar"],comp,["Total general",nc]);
   const cv=cov(R.rows);top=addTabla(td,top,["Asignatura","Básica","Disponible","Por verificar","Sin recurso","Cobertura mínima","Cobertura máxima"],
-    R.subjects.map(s=>[s.map||s.name,s.bas,s.si,s.pv,s.no,s.bas?Math.round(s.si/s.bas*100)/100:null,s.bas?Math.round((s.si+s.pv)/s.bas*100)/100:null]),
+    R.subjects.map(s=>[sLab(s),s.bas,s.si,s.pv,s.no,s.bas?Math.round(s.si/s.bas*100)/100:null,s.bas?Math.round((s.si+s.pv)/s.bas*100)/100:null]),
     ["Total general",cv.bas.length,cv.si,cv.pv,cv.no,cv.bas.length?Math.round(cv.si/cv.bas.length*100)/100:null,cv.bas.length?Math.round((cv.si+cv.pv)/cv.bas.length*100)/100:null]);
   td.getColumn(6).numFmt="0%";td.getColumn(7).numFmt="0%";[42,40,34,16,16,14,14].forEach((w,i)=>td.getColumn(i+1).width=w);
   // Syllabus, Consolidado, Asignaturas
-  addSheet(wb,"Syllabus (zip)",["Archivo","Asignatura (syllabus)","Año de versión","Tipo en syllabus","Referencia","Links"],S.syl.flatMap(sy=>sy.refs.map(r=>[sy.file.split("/").pop(),sy.subject,sy.version,r.tipoOverride||r.tipo,r.ref,(r.links||[]).join(" · ")])),[34,30,12,14,80,50]);
+  addSheet(wb,"Syllabus (zip)",["Archivo","Programa","Asignatura (syllabus)","Año de versión","Tipo en syllabus","Referencia","Links"],S.syl.filter(sy=>R.progs.includes(sy.prog)).flatMap(sy=>sy.refs.map(r=>[sy.file.split("/").pop(),sy.prog,sy.subject,sy.version,r.tipoOverride||r.tipo,r.ref,(r.links||[]).join(" · ")])),[34,30,30,12,14,80,50]);
   addSheet(wb,"Consolidado",["Fila en consolidado",...HI.map(([h])=>h)],prog.map(r=>[r.fila,...fromRaw(r)]),[11]);
-  addSheet(wb,"Asignaturas",["Archivo","Asignatura (syllabus)","Asignatura en el consolidado","Año de versión","Referencias","Estado","Observación"],
-    [...R.subjects.map(s=>[s.sy.file.split("/").pop(),s.name,s.map||"(no está: registrar completa)",s.sy.version,s.n,s.estado,s.sy.error||(!s.sy.refs.length?"No se leyó bibliografía: revisar el archivo.":"")]),
-     ...R.sinSyl.map(s=>["—","—",s.asig,"—",s.n,s.nodicta?"Ya no se dicta":"Sin syllabus",s.nodicta?"Sus títulos salen (en rojo en el Cruce).":"No llegó syllabus: no se hace nada."])],[34,30,40,12,11,20,50]);
+  addSheet(wb,"Asignaturas",["Archivo","Programa","Asignatura (syllabus)","Asignatura en el consolidado","Año de versión","Referencias","Estado","Observación"],
+    [...R.subjects.map(s=>[s.sy.file.split("/").pop(),s.prog,s.name,s.map||"(no está: registrar completa)",s.sy.version,s.n,s.estado,s.sy.error||(!s.sy.refs.length?"No se leyó bibliografía: revisar el archivo.":!s.map?"No calza con ninguna asignatura del consolidado: revisar.":s.sy.ambig?"La asignatura se repite en otro programa: confirmar el programa.":"")]),
+     ...R.sinSyl.map(s=>["—",s.prog,"—",s.asig,"—",s.n,s.nodicta?"Ya no se dicta":"Sin syllabus",s.nodicta?"Sus títulos salen (en rojo en el Cruce).":"No llegó syllabus: no se hace nada."])],[34,30,30,40,12,11,20,50]);
   // Cruce
   const ws=wb.addWorksheet("Cruce",{views:[{state:"frozen",ySplit:1}]});hdr(ws.addRow([...A,...HI.map(([h])=>h)]));const oc=A.length+pos("observacion")+1;
   for(const z of cr){const r=ws.addRow([...z.a,...z.v]);fmtRow(r);if(z.link&&pos("observacion")>=0){const cell=r.getCell(oc);linkCell(cell,String(cell.value??""),z.link);cell.font={color:{argb:"FF1B2A4A"},underline:true}}
     if(z.caso===C3)r.eachCell({includeEmpty:true},cc=>{cc.fill=RED;cc.font=REDF})}
   ws.autoFilter={from:{row:1,column:1},to:{row:1,column:A.length+HI.length}};
-  A.forEach((h,i)=>ws.getColumn(i+1).width=/Qué|Fuente/.test(h)?46:/Asignatura/.test(h)?30:16);HI.forEach(([h],i)=>ws.getColumn(A.length+i+1).width=/titulo autor/.test(norm(h))?70:/observacion$/.test(norm(h))?46:/asignatura/.test(norm(h))?30:16);
+  A.forEach((h,i)=>ws.getColumn(i+1).width=/Qué|Fuente|También/.test(h)?46:/Asignatura|Programa|compra/.test(h)?30:16);HI.forEach(([h],i)=>ws.getColumn(A.length+i+1).width=/titulo autor/.test(norm(h))?70:/observacion$/.test(norm(h))?46:/asignatura/.test(norm(h))?30:16);
   wb.worksheets.forEach((w,i)=>w.orderNo=i);
   const buf=await wb.xlsx.writeBuffer();window.__xlsx=buf;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
-  a.download=`Cruce syllabus - ${S.prog.slice(0,60)} - ${hoy.replace(/\//g,"-")}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);
+  a.download=`Cruce syllabus - ${PL.slice(0,60)} - ${hoy.replace(/\//g,"-")}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);
   $("#toast").textContent="Excel descargado. Revisa la carpeta Descargas."};
 
 /* ===================== efectos ===================== */
@@ -911,6 +1306,108 @@ if(new URLSearchParams(location.search).has("prueba")){(async()=>{try{const get=
   const cats=[];for(const n of["prueba/existencia.csv","prueba/catalogo.csv"]){try{cats.push(await get(n,n.split("/")[1]))}catch(e){}}
   if(cats.length){S.cat=await loadCatalogs(cats);st("#sCat","ok","Listo")}
   ready();window.__listo=true}catch(e){window.__error=e.message}})()}
+</script>
+<script>
+"use strict";
+/* =====================================================================
+   SYLLABUS MATCH · página continua (diseño aprobado, boceto C v10)
+   - Acordeón: al entrar solo el paso 1 está abierto; al abrir un paso se cierran los demás.
+   - Navegación rápida: un solo desplazamiento (0,42 s) que sigue al paso mientras se abre.
+   - La franja del paso elegido queda a la altura de la tarjeta de notas, 28 px bajo la barra de pasos.
+   - Toda tabla parte cerrada y se abre al tocarla.
+   ===================================================================== */
+const SECS=["s1","s2","s3","s4"],PANE={s1:"p1",s2:"p2",s3:"p3",s4:"p4"};
+const head=$("#head"),mini=$("#mini");
+/* barra fija: copia de los pasos */
+$("#steps2").innerHTML=$("#steps").innerHTML;$$("#steps2 [id]").forEach(e=>e.removeAttribute("id"));$$("#steps2 .jp").forEach(e=>e.classList.remove("jp"));
+const SEPpx=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sep"))||28;
+const miniBottom=()=>mini.offsetTop+mini.offsetHeight;
+function setMb(){document.documentElement.style.setProperty("--mb",miniBottom()+"px")}
+/* espacio justo al final para que el paso elegido pueda quedar arriba (también el último) */
+function fitFor(t){const fin=$("#fin"),big=$(".big"),as=$("aside.notas");if(!t||t.hidden){fin.style.height="0px";return}
+  const resto=big.getBoundingClientRect().bottom-t.getBoundingClientRect().top;
+  const g=$(".lay"),pie=document.documentElement.scrollHeight-(g.getBoundingClientRect().bottom+scrollY);
+  const falta=Math.max(as.offsetHeight+parseFloat(getComputedStyle(as).marginTop)-resto,innerHeight-(miniBottom()+SEPpx())-resto-pie,0);fin.style.height=Math.ceil(falta)+"px"}
+/* desplazamiento propio: corto y suave; sigue al paso mientras el acordeón se abre y se cierra */
+let animId=0;
+function animScroll(t,dur=420){cancelAnimationFrame(animId);const y0=scrollY,t0=performance.now();
+  const dest=()=>t.id==="s1"?0:t.getBoundingClientRect().top+scrollY-miniBottom()-SEPpx();
+  const step=now=>{const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);fitFor(t);
+    const max=document.documentElement.scrollHeight-innerHeight,d=Math.max(0,Math.min(dest(),max));scrollTo(0,y0+(d-y0)*e);
+    if(k<1)animId=requestAnimationFrame(step);else{fitFor(t);scrollTo(0,Math.max(0,dest()));spy()}};
+  animId=requestAnimationFrame(step)}
+/* acordeón */
+function openOnly(id){SECS.forEach(s=>$("#"+s).classList.toggle("closed",s!==id));setLearn(PANE[id])}
+function goSec(id){const t=$("#"+id);if(!t||t.hidden)return;openOnly(id);animScroll(t)}
+window.goSec=goSec;
+SECS.forEach(id=>{const sec=$("#"+id),bd=sec.querySelector(".cband");bd.querySelector(".r2").insertAdjacentHTML("beforeend",'<span class="tg" aria-hidden="true"></span>');
+  if(id!=="s1")sec.classList.add("closed");
+  bd.addEventListener("click",e=>{if(e.target.closest("button"))return;if(sec.classList.contains("closed"))goSec(id);else{sec.classList.add("closed");setTimeout(spy,350)}})});
+$$(".steps .cv").forEach(b=>b.addEventListener("click",()=>{if(!b.disabled)goSec(b.dataset.go)}));
+function unlock(){["s2","s3","s4"].forEach(s=>$("#"+s).hidden=false);$$("#steps2 .cv").forEach(b=>b.disabled=false)}
+window.unlock=unlock;
+/* paso activo, barra fija y brillo del vidrio (una vez por cuadro, liviano) */
+let spyQ=false;
+function spy(){spyQ=false;const show=$("#steps").getBoundingClientRect().bottom<miniBottom();mini.classList.toggle("show",show);
+  let cur=SECS.findIndex(s=>{const e=$("#"+s);return!e.hidden&&!e.classList.contains("closed")});
+  if(cur<0){const lim=miniBottom()+120;cur=0;SECS.forEach((s,i)=>{const e=$("#"+s);if(!e.hidden&&e.getBoundingClientRect().top<lim)cur=i})}
+  const listo=!$("#s2").hidden;$$(".steps").forEach(n=>[...n.children].forEach((c,i)=>{c.classList.toggle("on",i===cur);c.classList.toggle("done",listo&&i<cur)}));
+  const max=document.documentElement.scrollHeight-innerHeight,gx=(12+(max>0?scrollY/max:0)*76).toFixed(1)+"%";head.style.setProperty("--gx",gx);mini.style.setProperty("--gx",gx)}
+addEventListener("scroll",()=>{if(!spyQ){spyQ=true;requestAnimationFrame(spy)}},{passive:true});
+addEventListener("resize",()=>{setMb();spy()});
+/* desplegables: toda tabla parte cerrada */
+function openT(id,force){const p=document.getElementById(id);if(!p)return;const b=document.querySelector(`.tgl[data-t="${id}"]`);const o=force==null?!p.classList.contains("open"):!!force;p.classList.toggle("open",o);if(b)b.setAttribute("aria-expanded",o)}
+window.openT=openT;
+$$(".tgl").forEach(b=>b.addEventListener("click",()=>openT(b.dataset.t)));
+$("#go").addEventListener("click",()=>openT("tAsigs",true));
+/* criterios de selección */
+$("#critBtn").addEventListener("click",()=>{const o=$("#critp").classList.toggle("open");$("#critBtn").setAttribute("aria-expanded",o)});
+/* botón «i» de avisos */
+$("#ib").addEventListener("click",e=>{e.stopPropagation();const p=$("#ipop");p.hidden=!p.hidden;$("#ib").setAttribute("aria-expanded",!p.hidden)});
+document.addEventListener("click",e=>{if(!e.target.closest(".iw"))$("#ipop").hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#ipop").hidden=true;$("#critp").classList.remove("open");$("#critBtn").setAttribute("aria-expanded",false)}});
+/* casillas: «Elegir» pasa a «Cambiar» cuando el archivo está listo */
+const _st=st;st=function(id,cls,txt){_st(id,cls,txt);const p=$(id).closest(".drop").querySelector(".pill");if(p)p.textContent=cls==="ok"?"Cambiar":"Elegir"};
+/* destello de las divisiones al aparecer */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove("go");void e.target.offsetWidth;e.target.classList.add("go")}}),{threshold:1});
+$$(".sepx").forEach(s=>io.observe(s));
+/* ===== paso 2: detalle del cruce, aviso, resumen y cuadre (con los datos reales) ===== */
+let XPK="";
+const nf=n=>Number(n||0).toLocaleString("es-CL");
+const XPDEF={c1:["Títulos nuevos",x=>x.caso===C1],c2:["Títulos que ya estaban",x=>x.caso===C2],c3:["Títulos que salen",null],compra:["Títulos por comprar",x=>x.compra],rev:["Títulos por revisar",x=>x.revisar]};
+function renderXP(){const k=XPK;if(!k||!S.v)return;const[nm,f]=XPDEF[k];const mp=S.v.progs.length>1;$("#xpt").textContent=nm;
+  if(k==="c3"){const L=S.v.salen;$("#xph").innerHTML="<tr><th>Asignatura en el consolidado</th><th>Título en el consolidado</th><th>Tipo</th><th>Motivo</th></tr>";
+    $("#xpb").innerHTML=L.length?L.map(z=>`<tr><td>${esc(z.r.asignatura)}${mp?`<div class="why">${esc(z.prog)}</div>`:""}</td><td class="l">${esc(z.r.titulo)}</td><td class="c">${esc(z.r.tipo)}</td><td class="l">${esc(z.motivo)}</td></tr>`).join(""):'<tr><td colspan="4" class="empty">Nada en esta vista.</td></tr>';
+    $("#xpn").textContent=`${nf(L.length)} filas del consolidado`;return}
+  const L=S.v.rows.filter(f);$("#xph").innerHTML="<tr><th>Asignatura</th><th>Referencia del syllabus</th><th>Tipo</th><th>Caso</th></tr>";
+  $("#xpb").innerHTML=L.length?L.map(x=>`<tr><td>${esc(x.asig)}${mp?`<div class="why">${esc(x.prog)}</div>`:""}</td><td class="l">${esc(x.ref)}</td><td class="c">${esc(x.tipoEf||x.tipoSyl||"")}</td><td class="c">${pill(x)}<div style="margin-top:4px">${dispPill(x)}</div></td></tr>`).join(""):'<tr><td colspan="4" class="empty">Nada en esta vista.</td></tr>';
+  $("#xpn").textContent=`${nf(L.length)} títulos`}
+function renderExtra(){if(!S.v)return;const v=S.v,c=v.cuadre,rows=v.rows,sb=v.subjects;
+  const nc=rows.filter(x=>x.compra).length,nr=rows.filter(x=>x.revisar).length,open=$("#xp").classList.contains("open");
+  $("#dcard").innerHTML='<span class="dct">Detalle del cruce de títulos</span>'+[["c1","Títulos nuevos","se agregan",c.nuevo,"pz"],["c2","Títulos que ya estaban","se dejan igual",c.ya,""],["c3","Títulos que salen","en rojo, no se borran",c.conSale,"ng"],["compra","Títulos por comprar","básica sin recurso físico ni digital",nc,""],["rev","Títulos por revisar","a mano, parecido 70 a 84",nr,""]]
+    .map(([k,t,s,n,cl])=>`<button class="rw${open&&XPK===k?" on":""}" data-k="${k}"><span>${t} <small>(${s})</small></span><b class="num ${cl}">${nf(n)}</b><i></i></button>`).join("");
+  $$("#dcard .rw").forEach(b=>b.onclick=()=>{const k=b.dataset.k,was=$("#xp").classList.contains("open")&&XPK===k;$$("#dcard .rw").forEach(x=>x.classList.remove("on"));
+    if(was){$("#xp").classList.remove("open");return}XPK=k;b.classList.add("on");renderXP();$("#xp").classList.add("open")});
+  if(open)renderXP();
+  /* aviso: el botón «i» se enciende si hay syllabus que no calzan o que podrían ser de otro programa */
+  const n=sb.filter(s=>s.sy.refs.length&&!s.map).length+sb.filter(s=>s.sy.ambig&&s.map).length;$("#ib").classList.toggle("on",!$("#aviso").hidden);$("#ibn").textContent=n||"";
+  /* resumen de asignaturas en el desplegable del semáforo */
+  const{bas,si,pv}=cov(rows),comp=sb.filter(s=>s.cls==="ok").length,volver=sb.filter(s=>s.estado==="Volver a analizar"||s.estado==="Registrar completa").length;
+  const cv=bas.length?(pv?pct(si/bas.length)+"–"+pct((si+pv)/bas.length):pct(si/bas.length)):"—";
+  $("#semMeta").textContent=`${sb.length} asignaturas · ${comp} completas · ${volver} por volver a analizar · cobertura básica ${cv}`;
+  /* notas al margen: en una frase y cuadre */
+  $("#resBox").hidden=false;
+  const ok1=c.syl===c.nuevo+c.ya,ok2=c.conTotal===c.conYa+c.conSale+c.conSin,mk=o=>o?'<span class="ok">cuadra</span>':'<span class="no">no cuadra</span>';
+  $("#cuadre").innerHTML=`${nf(c.syl)} títulos = ${nf(c.nuevo)} nuevos + ${nf(c.ya)} ya estaban ${mk(ok1)}<br>${nf(c.conTotal)} filas del consolidado = ${nf(c.conYa)} ya estaban + ${nf(c.conSale)} salen${c.conSin?` + ${nf(c.conSin)} sin syllabus`:""} ${mk(ok2)}`;$("#cuaBox").hidden=false}
+window.renderExtra=renderExtra;
+$("#xpc").onclick=()=>{$("#xp").classList.remove("open");$$("#dcard .rw").forEach(x=>x.classList.remove("on"))};
+$("#xpv").onclick=()=>{const m={c1:"c1",c2:"c2",c3:"c3",compra:"compra",rev:"rev"};S.filter=m[XPK]||"rev";renderChips();renderTable();openT("tRev",true);goSec("s3");setTimeout(moveSlider,400)};
+/* tarjetas de asignaturas: si el nombre no cabe en 2 líneas, la letra se achica hasta que cabe completo */
+function fitNames(){$$("#asigs .it .nm").forEach(n=>{let f=12.5;n.style.fontSize=f+"px";while(n.scrollHeight>n.clientHeight+1&&f>9){f-=.5;n.style.fontSize=f+"px"}})}
+const _ra=renderAsig;renderAsig=function(...a){_ra(...a);fitNames()};
+addEventListener("resize",()=>requestAnimationFrame(fitNames));
+/* inicio */
+setMb();spy();addEventListener("load",()=>{setMb();spy();fitNames()});
 </script>
 </body>
 </html>
