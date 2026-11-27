@@ -417,7 +417,8 @@ aside .kick{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:up
 .drops .drop .nm{font-family:var(--head);font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drops .drop .mt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dfoot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:8px;border-top:1px solid #E3E5E8;gap:8px}
-.dfoot .st{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* el estado deja 9 px de aire alrededor para que el halo del punto no se corte */
+.dfoot .st{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:9px;margin:-9px}
 .dfoot .st i{width:9px;height:9px;background:var(--cel);animation:pc 1.6s ease-out infinite}
 .dfoot .st.ok{color:var(--ink)}.dfoot .st.ok i{background:#111;animation:pn 1.8s ease-out infinite}
 .dfoot .st.err i{background:var(--neg);animation:none}
@@ -512,6 +513,19 @@ table.t tbody tr>td:first-child{font-style:normal;font-weight:600}
 .mapt .sel.sm{max-width:300px;width:100%}
 .mapt tr.sinpar>td:first-child{box-shadow:inset 3px 0 0 var(--neg)}
 .maph{font-size:14px;margin:18px 0 4px}
+/* base de datos automática */
+.auto{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.alab{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--plomo)}
+.nseg{display:inline-flex;gap:4px;position:relative;padding:4px;border-radius:99px;background:linear-gradient(180deg,#fff,#F5F6F7) padding-box,var(--bordeplata) border-box;border:1.3px solid transparent}
+.nseg button{all:unset;cursor:pointer;position:relative;z-index:1;font-size:13px;font-weight:600;padding:6px 18px;border-radius:99px;transition:color .25s}
+.nseg button[aria-pressed="true"]{color:#fff}
+.nsl{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:99px;background:var(--grafito);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 var(--cel);transition:left .35s cubic-bezier(.2,.7,.2,1),width .35s cubic-bezier(.2,.7,.2,1)}
+.ameta{flex:1;min-width:220px;font-size:12.5px;color:var(--plomo)}
+.ameta.err{color:var(--neg)}
+.aloc{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--plomo);margin-top:-6px}
+.aloc span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+.lk{all:unset;cursor:pointer;font-size:12px;font-weight:600;color:var(--plomo);text-decoration:underline;text-underline-offset:3px}
+.lk:hover{color:var(--ink)}
 /* exportar: el texto y el botón ya no se cortan */
 .exp p{flex:1;min-width:0}
 .exp .btn{flex:none}
@@ -563,13 +577,20 @@ table.t tbody tr>td:first-child{font-style:normal;font-weight:600}
             <tr><td>9</td><td class="n">Leyes, sentencias, web</td><td>Acceso libre por confirmar. Los artículos cuentan para la cobertura</td></tr>
             <tr><td>10</td><td class="n">Mismo libro en 2 asignaturas o programas</td><td>Una fila por asignatura, una sola compra. Se marca con «También lo pide»</td></tr>
           </table></div></div></div>
+        <!-- base de datos: el consolidado y las existencias se cargan solos (la carpeta y los archivos se eligen una vez y se recuerdan) -->
+        <div class="auto">
+          <span class="alab">Base de datos</span>
+          <div class="nseg" id="nivel"><span class="nsl" id="nsl"></span><button data-n="Pregrado">Pregrado</button><button data-n="Postgrado">Postgrado</button></div>
+          <span class="ameta" id="ameta">Elige el nivel: el consolidado y las existencias se cargan solos.</span>
+        </div>
+        <div class="aloc" id="aloc"><span id="locCon">Consolidados: sin carpeta</span><button class="lk" id="cambiaDir">Elegir carpeta</button><span id="locCat">Existencias: sin archivo</span><button class="lk" id="cambiaCat">Elegir existencias</button><a class="lk" id="nuevaPest" href="#" target="_blank" rel="noopener" hidden>Abrir en pestaña nueva</a></div>
         <div class="drops">
           <label class="drop" id="dSyl"><input type="file" id="fSyl" multiple accept=".zip,.pdf,.docx"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span class="dn">1</span></span>
-            <span class="lbl">Syllabus que llegaron</span><span class="nm" id="nSyl">Zip, PDF o Word</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sSyl"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
+            <span class="lbl">Syllabus</span><span class="nm" id="nSyl">PDF, Word o archivos zip</span><span class="mt" id="mSyl">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sSyl"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
           <label class="drop" id="dCon"><input type="file" id="fCon" accept=".xlsx,.xlsm,.xls"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></span><span class="dn">2</span></span>
-            <span class="lbl">Lo ya revisado</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="dfoot"><span class="st" id="sCon"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
+            <span class="lbl">Documento interno</span><span class="nm" id="nCon">Consolidado (pregrado o postgrado)</span><span class="mt" id="mCon">Excel de SharePoint</span><span class="dfoot"><span class="st" id="sCon"><i></i>Pendiente</span><span class="pill">Elegir</span></span></label>
           <label class="drop" id="dCat"><input type="file" id="fCat" multiple accept=".csv,.xlsx,.xls,.txt"><span class="dtop"><span class="fi"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.5 1-4 15-3.5-1z"/></svg></span><span class="dn">3</span></span>
-            <span class="lbl">Existencias</span><span class="nm" id="nCat">Hoja Existencia y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sCat"><i></i>Opcional</span><span class="pill">Elegir</span></span></label>
+            <span class="lbl" id="lblBase">Base de datos biblioteca</span><span class="nm" id="nCat">Hoja Existencia y Alma</span><span class="mt" id="mCat">Puedes elegir varios a la vez</span><span class="dfoot"><span class="st" id="sCat"><i></i>Opcional</span><span class="pill">Elegir</span></span></label>
         </div>
         <div class="runrow run"><button class="btn" id="go" disabled>Comparar</button><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div></div>
         <div class="log" id="log" aria-live="polite">Carga los syllabus y el consolidado para empezar.</div>
@@ -850,7 +871,9 @@ const CMAP={programa:[/^programa( academico)?$/],asignatura:[/^asignatura$/],tip
   semestre:[/^semestre/],ciclo:[/^ciclo$/],grado:[/^grado academico$/],anioSyl:[/^ano ed syllabus$/],anioBca:[/^ano ed bca$/],obs:[/^observacion$/],compra:[/^observacion de compra$/]};
 function readConsolidado(buf){const wb=XLSX.read(buf,{type:"array",dense:true,cellFormula:false,cellHTML:false,cellStyles:false});
   const sh=wb.SheetNames.find(n=>/^consolidado/i.test(n.trim()))||wb.SheetNames[0];
-  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,defval:"",raw:true});
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,defval:"",raw:true});return conFromRows(rows,sh)}
+/* arma el consolidado desde las filas ya leídas (las filas pueden venir de la lectura en segundo plano o de lo guardado en el navegador) */
+function conFromRows(rows,sh){
   let h=rows.findIndex(r=>r.some(c=>/^titulo autor$/.test(norm(c))));if(h<0)throw new Error("No encontré la columna «Titulo - Autor» en la hoja "+sh);
   const head=rows[h].map(c=>String(c).trim()),hn=head.map(norm),col={};
   for(const[k,rx]of Object.entries(CMAP)){const i=hn.findIndex(x=>rx.some(r=>r.test(x)));col[k]=i}
@@ -868,7 +891,8 @@ function readCatalog(buf,name){let wb;
     wb=XLSX.read(buf,{type:"array",dense:true,raw:false,sheets:sh})}   // del Historico Existencia solo se lee la hoja Existencia
   else wb=XLSX.read(new TextDecoder("utf-8").decode(buf),{type:"string",dense:true,raw:false}); // CSV en UTF-8 (con o sin BOM)
   const ws=wb.Sheets[wb.SheetNames.find(n=>/^existencia$/i.test(n.trim()))||wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false});const hn=rows[0].map(norm);const f=(...rx)=>hn.findIndex(h=>rx.some(r=>r.test(h)));
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false});return catFromRows(rows,name)}
+function catFromRows(rows,name){if(!rows.length)throw new Error(name+": el archivo está vacío");const hn=rows[0].map(norm);const f=(...rx)=>hn.findIndex(h=>rx.some(r=>r.test(h)));
   if(f(/^hrid registro$/)>=0&&f(/^biblioteca$/)>=0)return readExistencia(rows,f,name);
   const c={title:f(/^title$/),author:f(/^author$/),mms:f(/^mms id$/),isbn:f(/^isbn/),ed:f(/^edition$/),date:f(/^publication date$/),lib:f(/^library name$/),items:f(/^num of items/),life:f(/^lifecycle$/),
     port:f(/portfolio/,/electronic collection/),coll:f(/electronic collection public name/,/collection name/)};
@@ -1173,19 +1197,22 @@ function bindDrop(drop,input,fn){input.onchange=()=>fn([...input.files]);
   drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");fn([...e.dataTransfer.files])})}
 function st(id,cls,txt){const e=$(id);e.className="st "+cls;e.innerHTML="<i></i>"+esc(txt)}
 function ready(){$("#go").disabled=!(S.sylFiles&&S.con)}
-async function loadCatalogs(files){let all={recs:[],rows:0,baja:0,tipos:[]};for(const f of files){const c=readCatalog(await f.arrayBuffer(),f.name);all.recs.push(...c.recs);all.rows+=c.rows;all.baja+=c.baja||0;all.tipos.push(c.tipo)}
+/* las existencias y el consolidado se leen en segundo plano y quedan guardados en el navegador (getCat y getCon, al final); si eso no está disponible, se leen como antes */
+async function loadCatalogs(files){let all={recs:[],rows:0,baja:0,tipos:[]};for(const f of files){const c=window.getCat?await getCat(f):readCatalog(await f.arrayBuffer(),f.name);all.recs.push(...c.recs);all.rows+=c.rows;all.baja+=c.baja||0;all.tipos.push(c.tipo)}
   buildCatIndex(all);return all}
-bindDrop($("#dSyl"),$("#fSyl"),files=>{if(!files.length)return;S.sylFiles=files;$("#nSyl").textContent=files.map(f=>f.name).join(", ");$("#mSyl").textContent=files.length+" archivo(s)";st("#sSyl","ok","Listo para leer");ready()});
-bindDrop($("#dCon"),$("#fCon"),async files=>{const f=files[0];if(!f)return;$("#nCon").textContent=f.name;st("#sCon","","Leyendo… (puede tardar unos segundos)");await sleep(30);
-  try{S.con=readConsolidado(await f.arrayBuffer());const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+bindDrop($("#dSyl"),$("#fSyl"),files=>{if(!files.length)return;S.sylFiles=files;$("#nSyl").textContent=files.map(f=>f.name).join(", ");$("#mSyl").textContent=files.length+" archivo(s)";st("#sSyl","ok","Listo");ready()});
+async function loadCon(f){if(!f)return;$("#nCon").textContent=f.name;st("#sCon","","Leyendo en segundo plano…");await sleep(30);
+  try{S.con=window.getCon?await getCon(f):readConsolidado(await f.arrayBuffer());const progs=[...new Set(S.con.data.map(r=>r.programa).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
     if(S.res&&S.syl.length){S.vu=S.vp="";S.showAll=false;S.forceProg="";renderAll()}else fillUnits();
     $("#mCon").textContent=`${S.con.nivel} · ${S.con.data.length.toLocaleString("es-CL")} filas · ${progs.length} programas`;st("#sCon","ok","Listo");}
-  catch(e){S.con=null;st("#sCon","err",e.message)}ready()});
-bindDrop($("#dCat"),$("#fCat"),async files=>{if(!files.length)return;st("#sCat","","Leyendo… (la hoja Existencia puede tardar un minuto)");await sleep(30);
+  catch(e){S.con=null;st("#sCon","err",e.message)}ready()}
+async function loadCat(files){if(!files.length)return;st("#sCat","","Leyendo en segundo plano… (la primera vez puede tardar)");await sleep(30);
   try{const all=await loadCatalogs(files);S.cat=all;$("#nCat").textContent=files.map(f=>f.name).join(", ");
     $("#mCat").textContent=`${[...new Set(all.tipos)].join(" + ")} · ${all.recs.length.toLocaleString("es-CL")} títulos · ${all.rows.toLocaleString("es-CL")} ejemplares${all.baja?" · "+all.baja.toLocaleString("es-CL")+" dados de baja (no cuentan)":""}`;st("#sCat","ok","Listo");
     if(all.recs.length<1000)st("#sCat","err",`Solo ${all.recs.length} títulos: ¿el informe tiene un filtro de fecha?`);if(S.res){renderAll()}}
-  catch(e){S.cat=null;st("#sCat","err",e.message)}});
+  catch(e){S.cat=null;st("#sCat","err",e.message)}}
+bindDrop($("#dCon"),$("#fCon"),files=>loadCon(files[0]));
+bindDrop($("#dCat"),$("#fCat"),files=>loadCat(files));
 $("#prog").onchange=()=>{const v=$("#prog").value;
   if(!S.res){S.prog=v;renderUP();renderAsig();return}
   if(S.showAll){S.forceProg=v;S.prog=v;S.syl.forEach(s=>delete s.mapOverride);S.vu="";S.vp="";renderAll();return}   // elegido a mano en «Ver todas»: aplica a todos los syllabus
@@ -1316,7 +1343,7 @@ addEventListener("resize",moveSlider);
 /* ===================== modo prueba local (?prueba) ===================== */
 if(new URLSearchParams(location.search).has("prueba")){(async()=>{try{const get=async(u,n)=>{const r=await fetch(u);if(!r.ok)throw new Error(u);return new File([await r.blob()],n)};
   const syl=await get("prueba/syllabus.zip","syllabus.zip"),con=await get("prueba/consolidado.xlsx","consolidado.xlsx");
-  S.sylFiles=[syl];st("#sSyl","ok","Listo para leer");$("#nSyl").textContent="syllabus.zip";
+  S.sylFiles=[syl];st("#sSyl","ok","Listo");$("#nSyl").textContent="syllabus.zip";
   S.con=readConsolidado(await con.arrayBuffer());fillUnits();st("#sCon","ok","Listo");
   const cats=[];for(const n of["prueba/existencia.csv","prueba/catalogo.csv"]){try{cats.push(await get(n,n.split("/")[1]))}catch(e){}}
   if(cats.length){S.cat=await loadCatalogs(cats);st("#sCat","ok","Listo")}
@@ -1434,8 +1461,97 @@ const _ra=renderAsig;renderAsig=function(live,...a){if(!live&&!S.res)renderLoade
 const _ready=ready;ready=function(){_ready();if(S.sylFiles&&S.sylFiles!==lastFiles){lastFiles=S.sylFiles;renderAsig();listSyl().then(()=>{if(!S.res)renderAsig()})}};
 renderAsig();
 addEventListener("resize",()=>requestAnimationFrame(fitNames));
+/* tarjeta 3: «Base de datos biblioteca»; si no cabe, solo «Base de datos» */
+function fitBase(){const l=$("#lblBase");l.textContent="Base de datos biblioteca";if(l.scrollWidth>l.clientWidth+1)l.textContent="Base de datos"}
+fitBase();addEventListener("resize",fitBase);addEventListener("load",fitBase);
+/* =====================================================================
+   BASE DE DATOS AUTOMÁTICA
+   - Los Excel se leen en segundo plano (la página no se pega).
+   - Lo leído queda guardado en este navegador: la próxima vez carga en segundos y solo se vuelve a leer si el archivo cambió.
+   - La carpeta de los consolidados y los archivos de existencias se eligen una vez y se recuerdan.
+   Nada sale del computador: todo queda en el navegador.
+   ===================================================================== */
+const XLSX_URL="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+const WCODE=`importScripts("${XLSX_URL}");
+onmessage=e=>{const{buf,name,mode}=e.data;try{let wb,sh;
+  if(mode==="con"){wb=XLSX.read(buf,{type:"array",dense:true,cellFormula:false,cellHTML:false,cellStyles:false});sh=wb.SheetNames.find(n=>/^consolidado/i.test(n.trim()))||wb.SheetNames[0];
+    postMessage({sheet:sh,rows:XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,defval:"",raw:true})});return}
+  if(/\\.(xlsx|xlsm|xls)$/i.test(name)){const names=XLSX.read(buf,{type:"array",bookSheets:true}).SheetNames;sh=names.find(n=>/^existencia$/i.test(n.trim()))||names[0];wb=XLSX.read(buf,{type:"array",dense:true,raw:false,sheets:sh})}
+  else wb=XLSX.read(new TextDecoder("utf-8").decode(buf),{type:"string",dense:true,raw:false});
+  const ws=wb.Sheets[wb.SheetNames.find(n=>/^existencia$/i.test(n.trim()))||wb.SheetNames[0]];
+  postMessage({sheet:sh||"",rows:XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false})})}catch(err){postMessage({error:String(err&&err.message||err)})}};`;
+let WURL=null;
+function parseInWorker(buf,name,mode){return new Promise((res,rej)=>{WURL=WURL||URL.createObjectURL(new Blob([WCODE],{type:"text/javascript"}));const w=new Worker(WURL);
+  w.onmessage=e=>{w.terminate();e.data.error?rej(new Error(e.data.error)):res(e.data)};w.onerror=()=>{w.terminate();rej(new Error("worker"))};w.postMessage({buf,name,mode},[buf])})}
+/* guardado en el navegador (IndexedDB) */
+const IDB=new Promise((res,rej)=>{try{const r=indexedDB.open("syllabusMatch",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
+async function idb(mode,fn){const db=await IDB;return new Promise((res,rej)=>{const tx=db.transaction("kv",mode),rq=fn(tx.objectStore("kv"));tx.oncomplete=()=>res(rq&&rq.result);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})}
+const idbGet=k=>idb("readonly",s=>s.get(k)).catch(()=>null);
+const idbSet=(k,v)=>idb("readwrite",s=>s.put(v,k)).catch(()=>null);
+async function idbKeep(k,v,prefix){try{const keys=await idb("readonly",s=>s.getAllKeys());for(const x of keys||[])if(typeof x==="string"&&x.startsWith(prefix+"|")&&x!==k)await idb("readwrite",s=>s.delete(x))}catch(e){}await idbSet(k,v)}
+const firma=(mode,f)=>`${mode}|${f.name}|${f.size}|${f.lastModified}`;
+async function getCon(f){const k=firma("con",f);let v=await idbGet(k);
+  if(!v){try{v=await parseInWorker(await f.arrayBuffer(),f.name,"con")}catch(e){return readConsolidado(await f.arrayBuffer())}idbKeep(k,v,"con|"+f.name)}
+  return conFromRows(v.rows,v.sheet)}
+async function getCat(f){const k=firma("cat",f);let v=await idbGet(k);if(v)return v;
+  try{const r=await parseInWorker(await f.arrayBuffer(),f.name,"cat");v=catFromRows(r.rows,f.name)}catch(e){if(e.message!=="worker")throw e;v=readCatalog(await f.arrayBuffer(),f.name)}
+  idbKeep(k,v,"cat|"+f.name);return v}
+window.getCon=getCon;window.getCat=getCat;
+/* carpeta de los consolidados y archivos de existencias recordados */
+const canFS=!!window.showDirectoryPicker;
+const enIframe=(()=>{try{return window.top!==window.self}catch(e){return true}})();
+async function permiso(h,pedir){try{if((await h.queryPermission({mode:"read"}))==="granted")return true;return pedir?(await h.requestPermission({mode:"read"}))==="granted":false}catch(e){return false}}
+function ameta(t,err){const a=$("#ameta");a.textContent=t;a.classList.toggle("err",!!err)}
+function fsError(e){if(e&&e.name==="AbortError")return;if(enIframe||(e&&e.name==="SecurityError")){ameta("Dentro de SharePoint no se puede elegir la carpeta. Ábrela en una pestaña nueva.",true);const a=$("#nuevaPest");a.href=location.href;a.hidden=false}else ameta("No se pudo abrir la carpeta: "+(e&&e.message||e),true)}
+async function buscar(dir,prueba,prof=0){let mejor=null;try{for await(const h of dir.values()){
+    if(h.kind==="file"){if(h.name.startsWith("~$")||!prueba(h.name))continue;const f=await h.getFile();if(!mejor||f.lastModified>mejor.f.lastModified)mejor={h,f}}
+    else if(prof<2&&!h.name.startsWith(".")){const m=await buscar(h,prueba,prof+1);if(m&&(!mejor||m.f.lastModified>mejor.f.lastModified))mejor=m}}}catch(e){}return mejor}
+const RX={Pregrado:/consolidado.*pregrado.*\.xls[xm]?$/i,Postgrado:/consolidado.*(postgrado|posgrado).*\.xls[xm]?$/i};
+async function mostrarUbic(){const d=await idbGet("dir"),c=await idbGet("cats")||[];
+  $("#locCon").textContent="Consolidados: "+(d?"carpeta «"+d.name+"»":"sin carpeta");$("#cambiaDir").textContent=d?"Cambiar carpeta":"Elegir carpeta";
+  $("#locCat").textContent="Base de datos: "+(c.length?c.map(h=>h.name).join(", "):"sin archivo");$("#cambiaCat").textContent=c.length?"Cambiar base de datos":"Elegir base de datos"}
+async function elegirDir(){try{const d=await showDirectoryPicker({id:"buai-syl",mode:"read"});await idbSet("dir",d);await mostrarUbic();return d}catch(e){fsError(e);return null}}
+async function elegirCats(){try{const hs=await showOpenFilePicker({id:"buai-exist",multiple:true,types:[{description:"Existencias (Excel o CSV)",accept:{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx",".xls"],"text/csv":[".csv",".txt"]}}]});
+    await idbSet("cats",hs);await mostrarUbic();return hs}catch(e){fsError(e);return null}}
+/* la cápsula negra se mide contra el selector cada vez (al cargar la letra, al cambiar el tamaño de la ventana) para que calce exacto con el botón */
+let nivelActual="Pregrado";
+function ponerCapsula(){const a=$(`#nivel button[data-n="${nivelActual}"]`),s=$("#nsl"),box=$("#nivel");if(!a||!a.offsetWidth)return;
+  const ra=a.getBoundingClientRect(),rb=box.getBoundingClientRect(),bl=parseFloat(getComputedStyle(box).borderLeftWidth)||0;s.style.left=(ra.left-rb.left-bl)+"px";s.style.width=ra.width+"px"}
+function marcarNivel(n){nivelActual=n;$$("#nivel button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.n===n));ponerCapsula()}
+addEventListener("resize",ponerCapsula);if(document.fonts)document.fonts.ready.then(ponerCapsula);
+/* «Comparar» espera a que la base de datos termine de cargar (si no, la lista de compra saldría mal) */
+const _lc=loadCat;loadCat=async function(files){S.catLoading=true;ready();try{await _lc(files)}finally{S.catLoading=false;ready()}};
+const _rd2=ready;ready=function(){_rd2();if(S.catLoading)$("#go").disabled=true};
+/* el nivel cambia solo el consolidado; la base de datos de la biblioteca es la misma para pregrado y postgrado y se carga una vez */
+let conTurno=0,catFirma="";
+const firmaFiles=fs=>fs.map(f=>f.name+"|"+f.size+"|"+f.lastModified).join("·");
+async function cargarBase(hs){const fs=await Promise.all(hs.map(h=>h.getFile()));const fz=firmaFiles(fs);if(fz===catFirma&&(S.cat||S.catLoading))return;catFirma=fz;
+  await loadCat(fs);estadoAuto()}
+function estadoAuto(){const n=lsGet("rs_nivel","");const okC=!!S.con,okB=!!S.cat;
+  if(S.catLoading)ameta(`${okC?"Consolidado de "+n+" listo. ":""}Cargando la base de datos de la biblioteca en segundo plano… «Comparar» se activa al terminar.`);
+  else if(okC&&okB)ameta(`Listo: consolidado de ${S.con.nivel} y base de datos de la biblioteca.`);
+  else if(okC)ameta(`Listo el consolidado de ${S.con.nivel}. Falta la base de datos: toca «Elegir base de datos» (solo la primera vez).`,true)}
+async function autoLoad(nivel,gesto){if(!canFS){ameta("Este navegador no permite recordar carpetas: carga los archivos a mano en las casillas de abajo.",true);return}
+  const turno=++conTurno;marcarNivel(nivel);lsSet("rs_nivel",nivel);
+  try{let dir=await idbGet("dir");if(dir&&!(await permiso(dir,gesto)))dir=null;
+    if(!dir){if(!gesto){ameta(`Toca «${nivel}» para cargar la base de datos.`);return}ameta("Elige una vez la carpeta de OneDrive donde están los consolidados.");dir=await elegirDir();if(!dir)return}
+    ameta(`Buscando el consolidado de ${nivel}…`);const con=await buscar(dir,n=>RX[nivel].test(n));if(turno!==conTurno)return;
+    if(!con){ameta(`No encontré «Consolidado … ${nivel}» en la carpeta «${dir.name}» ni en sus subcarpetas.`,true);return}
+    /* la base de datos parte en paralelo (sin esperar) y no se repite si ya está cargada */
+    let hs=await idbGet("cats")||[],ok=[];for(const h of hs)if(await permiso(h,gesto))ok.push(h);
+    if(!ok.length){const ex=await buscar(dir,n=>/(existencia|ejemplares).*\.(xlsx|xls|csv)$/i.test(n));if(ex)ok=[ex.h]}
+    const base=ok.length?cargarBase(ok):null;
+    /* si se cambia de nivel mientras carga, gana el último elegido */
+    ameta(`Cargando ${con.f.name}…`);await getCon(con.f);if(turno!==conTurno)return;await loadCon(con.f);if(turno!==conTurno)return;
+    estadoAuto();if(base)await base}
+  catch(e){fsError(e)}finally{mostrarUbic()}}
+$$("#nivel button").forEach(b=>b.addEventListener("click",()=>autoLoad(b.dataset.n,true)));
+$("#cambiaDir").addEventListener("click",async()=>{if(!canFS)return autoLoad("Pregrado",true);const d=await elegirDir();if(d){const n=lsGet("rs_nivel","");if(n)autoLoad(n,true)}});
+$("#cambiaCat").addEventListener("click",async()=>{if(!canFS)return autoLoad("Pregrado",true);const hs=await elegirCats();if(hs&&hs.length){catFirma="";const p=cargarBase(hs);estadoAuto();await p}});
+/* al abrir: siempre parte en Pregrado; si el navegador ya tiene permiso, se carga solo */
+(async()=>{await mostrarUbic();marcarNivel("Pregrado");if(!new URLSearchParams(location.search).has("prueba"))autoLoad("Pregrado",false)})();
 /* inicio */
-setMb();spy();addEventListener("load",()=>{setMb();spy();fitNames()});
+setMb();spy();addEventListener("load",()=>{setMb();spy();fitNames();ponerCapsula()});
 </script>
 </body>
 </html>
